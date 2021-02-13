@@ -3,8 +3,12 @@ import {View, StyleSheet} from 'react-native';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import {Avatar, Title, Caption, Paragraph, Drawer, Text, TouchableRipple, Switch,} from 'react-native-paper';
 import Icon from 'react-native-ionicons';
-// import {AuthContext} from '../contexts/AuthContext';
 import Feather from 'react-native-vector-icons/Feather';
+// import {AboutScreen} from '../screens/AboutScreen';
+// import {SettingsScreen} from '../screens/SettingsScreen';
+// import {OrdersTab} from '../tabNavigators/OrdersTab';
+// import {inventoryTab} from '../tabNavigators/InventoryTab';
+// import {AuthContext} from '../contexts/AuthContext';
 
 export function DrawerContent(props) {
 
@@ -41,7 +45,10 @@ var user = {
   return (
     <View style={{flex: 1}}>
       <DrawerContentScrollView {...props}>
+
         <View style={styles.drawerContent}>
+
+          {/* User info box */}
           <View style={styles.userInfoSection}>
             <View style={{flexDirection: 'row', marginTop: 15}}>
               <Feather name="user" color={'#fff'} size={49} />
@@ -50,7 +57,6 @@ var user = {
                 <Caption style={styles.caption}>{user.email}</Caption>
               </View>
             </View>
-
             <View style={styles.row}>
               <View style={styles.section}>
                 <Paragraph style={[styles.paragraph, styles.caption]}>
@@ -67,26 +73,47 @@ var user = {
             </View>
           </View>
 
+          {/* First Section of the drawer items*/}
           <Drawer.Section style={styles.drawerSection}>
+            {/* 1 - Orders tab */}
             <DrawerItem
+              style = {styles.drawerItem}
               icon={({color, size}) => (
                 <Feather name="home" color={color} size={size} />
               )}
-              label="Groups"
-              // onPress={() => {
-              //   props.navigation.navigate('Main');
-              // }}
+              label="Orders"
+              onPress={() => {
+                props.navigation.navigate('OrdersTab');
+              }}
             />
+
+            {/* 2 - Inventory tab */}
             <DrawerItem
+            style = {styles.drawerItem}
               icon={({color, size}) => (
                 <Feather name="smile" color={color} size={size} />
               )}
-              label="Profile"
-              // onPress={() => {
-              //   props.navigation.navigate('Profile');
-              // }}
+              label="Inventory"
+              onPress={() => {
+                props.navigation.navigate('InventoryTab');
+              }}
             />
-            {/* <DrawerItem
+
+            {/* 3 - Invitation Code tab */}
+            <DrawerItem
+              style = {styles.drawerItem}
+              icon={({color, size}) => (
+                <Feather name="settings" color={color} size={size} />
+              )}
+              label="Invitation Code"
+              onPress={() => {
+                props.navigation.navigate('InvitationCode');
+              }}
+            />
+
+            {/* 4 - Settings tab */}
+            <DrawerItem
+            style = {styles.drawerItem}
               icon={({color, size}) => (
                 <Feather name="settings" color={color} size={size} />
               )}
@@ -94,20 +121,25 @@ var user = {
               onPress={() => {
                 props.navigation.navigate('Settings');
               }}
-            /> */}
+            />
+
+            {/* 5 - About tab */}
             <DrawerItem
+            style = {styles.drawerItem}
               icon={({color, size}) => (
                 <Feather name="code" color={color} size={size} />
               )}
               label="About"
-              // onPress={() => {
-              //   props.navigation.navigate('About');
-              // }}
+              onPress={() => {
+                props.navigation.navigate('About');
+              }}
             />
           </Drawer.Section>
-
-          <Drawer.Section title="Preferences">
+          
+          {/* Second section of the drawer items, Preferences  */}
+          <Drawer.Section title="Preferences" >
             <TouchableRipple
+            style = {styles.drawerItem}
               onPress={() => {
                 toggleTheme();
               }}>
@@ -122,8 +154,10 @@ var user = {
         </View>
       </DrawerContentScrollView>
 
+      {/* Third section of the drawer items, Log out */}
       <Drawer.Section style={styles.bottomDrawerSection}>
         <DrawerItem
+          style = {styles.logOutBox}
           icon={({color, size}) => (
             <Feather name="log-out" color={color} size={size} />
           )}
@@ -136,6 +170,8 @@ var user = {
     </View>
   );
 }
+
+
 
 // STYLES
 const styles = StyleSheet.create({
@@ -175,12 +211,19 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   drawerSection: {
-    marginTop: 15,
+    //marginTop: 15,
+    paddingHorizontal: 0,
+    paddingVertical: 20,
+  },
+  drawerItem: {
+    marginHorizontal: 0,
+  },
+
+  logOutBox: {
+    marginHorizontal: 0,
   },
   bottomDrawerSection: {
     marginBottom: 15,
-    borderTopColor: '#f4f4f4',
-    borderTopWidth: 1,
     backgroundColor: '#0094FF',
   },
   preference: {

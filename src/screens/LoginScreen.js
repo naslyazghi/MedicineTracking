@@ -5,12 +5,12 @@ import {FilledButton} from '../components/FilledButton';
 import {TextButton} from '../components/TextButton';
 import {Error} from '../components/Error';
 // import {AuthContainer} from '../components/AuthContainer';
-// import {AuthContext} from '../contexts/AuthContext';
+import {AuthContext} from '../contexts/AuthContext';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import * as Animatable from 'react-native-animatable';
 import jwt_decode from 'jwt-decode';
-// const BASE_URL = 'https://cop4331-test-2.herokuapp.com/';
+const BASE_URL = 'http://localhost:8080/';
 
 
 
@@ -34,7 +34,7 @@ const LoginScreen = ({navigation}) => {
         message: '',
     });
 
-    //const {logIn} = React.useContext(AuthContext);
+    const {logIn} = React.useContext(AuthContext);
 
 
     // 2 - DATA VALIDATION FOR THE USER INPUT
@@ -113,7 +113,7 @@ const LoginScreen = ({navigation}) => {
 
         try {
             // 1 - Respone variable from the API
-            const response = await fetch(BASE_URL + 'api/users/login', {
+            const response = await fetch(BASE_URL + 'api/user/login', {
                 method: 'POST',
                 body: js,
                 headerContainers: {'Content-Type': 'application/json'},
@@ -124,14 +124,14 @@ const LoginScreen = ({navigation}) => {
 
             // 3 - Processing the response
             // User not found
-            if (res.id <= 0) {
+            if (res.response != true) {
                 //setMessage('User/Password combination incorrect');
                 setData({
                     ...data,
-                    message: 'User/Password combination incorrect',
+                    message: res.message,
                 });
                 // Show an alert box
-                Alert.alert('Error', 'User/Password combination incorrect', [
+                Alert.alert('Error', res.message, [
                     {text: 'OK'},
                 ]);
                 return;
@@ -151,27 +151,27 @@ const LoginScreen = ({navigation}) => {
 
                 // Store the user Info
                 var user = {
-                    id: decoded.id,
+                    id: decoded._id,
                     username: decoded.name,
-                    email: res.email,
+                    email: decoded.email,
                     userToken: res.token,
                 };
                 
 
                 // Show an alert box
                 Alert.alert(
-                    'Meridian',
-                    'Login is successful\nid: ' +
+                    'Medicine Tracking',
+                    'Login Successful\nid: ' +
                     decoded.id +
                     '\nname: ' +
                     decoded.name +
                     '\nemail: ' +
-                    res.email,
+                    decoded.email,
                     +[{text: 'OK'}],
                 );
 
                 // lOGIN the user
-                // logIn(user);
+                logIn(user);
 
                 return;
                 // Direct the user to the main screen

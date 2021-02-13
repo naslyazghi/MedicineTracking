@@ -13,10 +13,9 @@ const Tab = createMaterialBottomTabNavigator();
 
 export function OrdersTab({navigation}) {
     return (
-
-
-      
+      // Bottom Tab Navigator
       <Tab.Navigator initialRouteName="CurrentOrdersStackScreen" activeColor="white" barStyle={{backgroundColor: '#0094FF', paddingVertical: 3}} shifting="true">
+        {/* New order tab */}
         <Tab.Screen
           name="New Order"
           component={NewOrderStackScreen}
@@ -29,6 +28,7 @@ export function OrdersTab({navigation}) {
           }}
         />
 
+        {/* Current trders tab */}
         <Tab.Screen
           name="Current Orders"
           component={CurrentOrdersStackScreen}
@@ -41,6 +41,7 @@ export function OrdersTab({navigation}) {
           }}
         />
 
+        {/* Delivered orders tab */}
         <Tab.Screen
           name="Delivered Orders"
           component={DeliveredOrdersStackScreen}
