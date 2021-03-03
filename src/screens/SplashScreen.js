@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-ionicons';
 import * as Animatable from 'react-native-animatable';
 import Feather from 'react-native-vector-icons/Feather';
@@ -21,7 +20,7 @@ const SplashScreen = ({navigation}) => {
                 />
             </View>
             <Animatable.View style={styles.footer} animation="fadeInUpBig">
-                <Text style={styles.title}>Track your inventory & shipement</Text>
+                <Text style={styles.title}>Track your inventory & shipment</Text>
                 <Text style={styles.text}>In the most easy way!</Text>
                 < View style={styles.button}>
                     <TouchableOpacity style={styles.signIn} onPress={() => navigation.navigate('LoginScreen')}>

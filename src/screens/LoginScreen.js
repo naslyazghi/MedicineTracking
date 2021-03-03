@@ -9,8 +9,9 @@ import {AuthContext} from '../contexts/AuthContext';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import * as Animatable from 'react-native-animatable';
-import jwt_decode from 'jwt-decode';
-const BASE_URL = 'http://localhost:8080/';
+import jwt_decode from "jwt-decode";
+// const BASE_URL = 'http://localhost:8080/';
+const BASE_URL = 'http://10.0.0.5:8080/';
 
 
 
@@ -29,7 +30,7 @@ const LoginScreen = ({navigation}) => {
         password: '',
         check_textInputChange: false,
         secureTextEntry: true,
-        isValidUser: true,
+        isValidEmail: true,
         isValidPassword: true,
         message: '',
     });
@@ -45,14 +46,14 @@ const LoginScreen = ({navigation}) => {
                 ...data,
                 email: val,
                 check_textInputChange: true,
-                isValidUser: true,
+                isValidEmail: true,
             });
         } else {
             setData({
                 ...data,
                 email: val,
                 check_textInputChange: false,
-                isValidUser: false,
+                isValidEmail: false,
             });
         }
     };
@@ -87,12 +88,12 @@ const LoginScreen = ({navigation}) => {
         if (val.trim().length >= 8) {
             setData({
                 ...data,
-                isValidUser: true,
+                isValidEmail: true,
             });
         } else {
             setData({
                 ...data,
-                isValidUser: false,
+                isValidEmail: false,
             });
         }
     };
@@ -102,6 +103,8 @@ const LoginScreen = ({navigation}) => {
     const loginHandle = async (email, password) => {
         // Construct the Json body for the request
         const js = '{"email":"' + email + '","password":"' + password + '"}';
+
+        console.log(js);
 
         // email or Password is empty
         if (email.length == 0 || password.length == 0) {
@@ -113,19 +116,25 @@ const LoginScreen = ({navigation}) => {
 
         try {
             // 1 - Respone variable from the API
+            console.log("Logging in...");
             const response = await fetch(BASE_URL + 'api/user/login', {
                 method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
                 body: js,
-                headerContainers: {'Content-Type': 'application/json'},
             });
-
+            console.log(response);
             // 2 - Parsing the response
             var res = JSON.parse(await response.text());
+            var token = res.Content;
 
             // 3 - Processing the response
             // User not found
             if (res.response != true) {
                 //setMessage('User/Password combination incorrect');
+                console.log("response failed");
                 setData({
                     ...data,
                     message: res.message,
@@ -138,9 +147,16 @@ const LoginScreen = ({navigation}) => {
             }
             // User found
             else {
+                console.log("response succeeded");
+                console.log(token);
                 // Decode the token
-                var jwt_decode = require('jwt-decode');
-                var decoded = jwt_decode(res.token);
+                try{
+                    var decoded = jwt_decode(token);
+                    console.log(decoded);
+                }
+                catch(e){
+                    console.log(e.message);
+                }
                 //localStorage.setItem('user_data', JSON.stringify(user));
 
                 // Set the message
@@ -151,22 +167,21 @@ const LoginScreen = ({navigation}) => {
 
                 // Store the user Info
                 var user = {
-                    id: decoded._id,
-                    username: decoded.name,
-                    email: decoded.email,
-                    userToken: res.token,
+                    id: decoded.user.id,
+                    username: decoded.user.name,
+                    email: decoded.user.email,
+                    userToken: token,
                 };
                 
-
                 // Show an alert box
                 Alert.alert(
                     'Medicine Tracking',
                     'Login Successful\nid: ' +
-                    decoded.id +
+                    user.id +
                     '\nname: ' +
-                    decoded.name +
+                    user.username +
                     '\nemail: ' +
-                    decoded.email,
+                    user.email,
                     +[{text: 'OK'}],
                 );
 
@@ -233,9 +248,9 @@ const LoginScreen = ({navigation}) => {
                 </View>
 
                 {/*Email input validation message*/}
-                {data.isValidUser ? null : (
+                {data.isValidEmail ? null : (
                 <Animatable.View animation="fadeInLeft" duration={500}>
-                    <Text style={styles.errorMsg}>Email must be minimum 8 characters.</Text>
+                    {/* <Text style={styles.errorMsg}>Email must be minimum 8 characters.</Text> */}
                 </Animatable.View>
                 )}
 
@@ -341,8 +356,9 @@ const styles = StyleSheet.create({
     textInput: {
         fontSize: 18,
         flex: 1,
-        marginTop: Platform.OS === 'ios' ? 0 : -12,
-        paddingLeft: 10,
+        // marginTop: Platform.OS === 'ios' ? 0 : -12,
+        // marginTop: 0,
+        paddingHorizontal: 10,
         color: '#000000',
     },
 
@@ -352,10 +368,13 @@ const styles = StyleSheet.create({
     },
 
     action: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '95%',
         flexDirection: 'row',
         marginTop: 15,
         paddingHorizontal: 15,
-        paddingVertical: 10,
+        paddingVertical: 8,
         borderWidth: 1,
         borderRadius: 8,
         borderColor: '#868686',

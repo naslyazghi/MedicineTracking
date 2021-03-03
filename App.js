@@ -1,12 +1,10 @@
 import 'react-native-gesture-handler';
-import { StatusBar } from 'expo-status-bar';
 import React, {useEffect} from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AuthenticationStackScreen from './src/stacks/AuthenticationStackScreen';
 import MainStackScreen from './src/stacks/MainStackScreen';
-import SplashScreen from './src/screens/SplashScreen'
 import {ActivityIndicator} from 'react-native-paper';
 import {AuthContext} from './src/contexts/AuthContext';
 import {Linking, Alert} from 'react-native';
@@ -15,86 +13,56 @@ import {Provider as PaperProvider, DefaultTheme as PaperDefaultTheme, DarkTheme 
 import {LogIn, Navigation} from 'react-feather';
 
 
+global.userTokenConst = null;
 const jwt_decode = require('jwt-decode');
-const Stack = createStackNavigator();
-const isUserSignedIn = true;
 
 
-let urlToBeOpened;
-let globalUserToken;
+   //_____________________________________\\  
+  //                                       \\
+ //         A P P   F U N C T I O N         \\
+//___________________________________________\\
 
-const useMount = func => useEffect(() => func(), []);
-
-// const HomeScreen = ({navigation}) => {
-//   return (
-//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//       <Text>Home Screen</Text>
-//       <Button title="Go to details screen" onPress={() => navigation.navigate("Details")}/>
-//     </View>
-//   );
-// };
-
-
-// const DetailsScreen = () => {
-//   return (
-//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//       <Text>Details Screen</Text>
-//     </View>
-//   );
-// }
 
 
 
 function App() {
 
-  useMount(() => {
-    Linking.getInitialURL().then(m => {
-        urlToBeOpened = m;
-    });
-    Linking.addEventListener("url", (m) => {
-      if (globalUserToken == null)
-          return;
-      handleInvite(m.url, globalUserToken);
-    });
-  });
-
+  // --------------------------
+  // 1 - LOGIN HANDELING
+  // --------------------------
 
   const initialLoginState = {
     isLoading: true,
-    userName: null,
     userToken: null,
   };
 
-
+  // Login reducer function
   const loginReducer = (prevState, action) => {
     switch (action.type) {
       case 'RETRIEVE_TOKEN':
-        globalUserToken = action.token;
+        // globalUserToken = action.token;
         return {
           ...prevState,
-          userToken: action.token,
           isLoading: false,
+          userToken: action.token,
         };
       case 'LOGIN':
         return {
           ...prevState,
-          userName: action.id,
-          userToken: action.token,
           isLoading: false,
+          userToken: action.token,
         };
       case 'LOGOUT':
         return {
           ...prevState,
-          userName: null,
-          userToken: null,
           isLoading: false,
+          userToken: null,
         };
       case 'REGISTER':
         return {
           ...prevState,
-          userName: action.id,
-          userToken: action.token,
           isLoading: false,
+          userToken: action.token,
         };
     }
   };
@@ -107,28 +75,36 @@ function App() {
 
   const authContext = React.useMemo(
     () => ({
-      // Sign In
+      // Log In
       logIn: async user => {
         const userToken = String(user.userToken);
-        const userName = user.username;
-
-        try {
+        // Store the token in the local storage
+        try 
+        {
           await AsyncStorage.setItem('userToken', userToken);
-        } catch (e) {
+          // Action
+          dispatch({type: 'LOGIN', token: userToken});
+        } 
+        catch (e) 
+        {
           console.log(e);
         }
-        // console.log('user token: ', userToken);
-        dispatch({type: 'LOGIN', id: userName, token: userToken});
       },
+
       // Sign Out
       signOut: async () => {
-        try {
+        // Delete the token from the local storage
+        try 
+        {
           await AsyncStorage.removeItem('userToken');
-        } catch (e) {
+          // Action
+          dispatch({type: 'LOGOUT'});
+        } 
+        catch (e) {
           console.log(e);
         }
-        dispatch({type: 'LOGOUT'});
       },
+      
       // Sign Up
       signUp: () => {},
       // Toggle Theme
@@ -143,23 +119,21 @@ function App() {
   useEffect(() => {
     setTimeout(async () => {
       // setIsLoading(false);
-      let userToken;
-      userToken = null;
-      try {
+      let userToken = null;
+      try 
+      {
         userToken = await AsyncStorage.getItem('userToken');
-      } catch (e) {
+        // globalUserToken = userToken;
+        dispatch({type: 'RETRIEVE_TOKEN', token: userToken});
+      } 
+      catch (e) 
+      {
         console.log(e);
       }
-      globalUserToken = userToken;
-      if (urlToBeOpened != null && userToken != null) {
-          const url = urlToBeOpened;
-          urlToBeOpened = null;
-          handleInvite(url, userToken);
-      }
-      // console.log('user token: ', userToken);
-      dispatch({type: 'RETRIEVE_TOKEN', token: userToken});
     }, 1000);
-  }, []);
+  });
+
+
 
 
   if (loginState.isLoading) {
@@ -170,32 +144,32 @@ function App() {
     );
   }
 
-
+  // Set the userToken global variable to be used in all screens
   global.userTokenConst = loginState.userToken;
 
 
 
 
+  // return (
+  //   // Navigation container is reponsible for controlling the themes, states, restoring states
+  //   <AuthContext.Provider value={authContext}>
+  //     <NavigationContainer>
+  //       {/* Check if user is logged in */}
+  //       {loginState.userToken !== null ? (
+  //         <MainStackScreen/>
+  //       ) : (
+  //         <AuthenticationStackScreen />
+  //       )}
+  //     </NavigationContainer>
+  //   </AuthContext.Provider>
+  // );
+
   return (
-    // Navigation container is reponsible for controlling the themes, states, restoring states
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
-        {/* Check if user is logged in */}
-        {loginState.userToken !== null ? (
-          // <Stack.Navigator>
-          //   <Stack.Screen name="Home" component={HomeScreen} 
-          //     options={{
-          //       title:'Medicine Tracking'
-          //     }}
-          //   />
-          //   <Stack.Screen name="Details" component={DetailsScreen} />
-          // </Stack.Navigator>
-          <MainStackScreen/>
-        ) : (
-          <AuthenticationStackScreen />
-        )}
-      </NavigationContainer>
-    </AuthContext.Provider>
+    <NavigationContainer>
+        <MainStackScreen/>
+    </NavigationContainer>
+  </AuthContext.Provider>
   );
 }
 

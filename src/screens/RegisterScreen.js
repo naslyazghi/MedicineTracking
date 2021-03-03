@@ -10,7 +10,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import * as Animatable from 'react-native-animatable';
 import jwt_decode from 'jwt-decode';
-//const BASE_URL = 'https://cop4331-test-2.herokuapp.com/';
+// const BASE_URL = 'http://localhost:8080/';
+const BASE_URL = 'http://10.0.0.5:8080/';
 
 
 
@@ -25,20 +26,41 @@ const RegisterScreen = ({navigation}) => {
 
     //  1 - VARIABLES & STATES
     const [data, setData] = React.useState({
+        invitationCode: '',
         email: '',
         username: '',
         password: '',
         confirm_password: '',
+        check_invitationCodeInputChange: false,
         check_emailInputChange: false,
         check_userNameInputChange: false,
         secureTextEntry: true,
         confirm_secureTextEntry: true,
+        isValidInvitationCode: true,
         isValidUser: true,
         isValidPassword: true,
         isValidEmail: true,
         message: '',
     });
 
+
+    const invitationCodeInputChange = val => {
+        if (val.trim().length == 36) {
+            setData({
+            ...data,
+            invitationCode: val,
+            check_invitationCodeInputChange: true,
+            isValidInvitationCode: true,
+            });
+        } else {
+            setData({
+            ...data,
+            invitationCode: val,
+            check_invitationCodeInputChange: false,
+            isValidInvitationCode: false,
+            });
+        }
+    };
 
 
     // 2 - DATA VALIDATION FOR THE USER INPUT
@@ -79,6 +101,23 @@ const RegisterScreen = ({navigation}) => {
             });
         }
     };
+
+
+    // Invitation code has to b 36 charachters long
+    const handleValidInvitationCode = val => {
+        if (val.trim().length == 36) {
+            setData({
+            ...data,
+            isValidUser: true,
+            });
+        } else {
+            setData({
+            ...data,
+            isValidUser: false,
+            });
+        }
+    };
+
 
     // Username has to be atleast 4 charachters long
     const handleValidUser = val => {
@@ -154,13 +193,52 @@ const RegisterScreen = ({navigation}) => {
 
 
     // 3 - REGISTERING HANDELING
-    const registerHandle = async (email, username, password, confirm_password,) => {
-        // email = "test@test.com";
-        // username = "testes";
-        // password = "123456789";
+    const registerHandle = async (invitationCode, email, username, password, confirm_password,) => {
+        console.log('login hundle');
+        console.log(invitationCode.length);
+        // Check if invitation code is valid
+        if (invitationCode.length != 36) {
+            console.log('Invitation code is not valid');
+            Alert.alert('Wrong Input!', 'You need a valid invitation code.', [
+            {text: 'OK'},
+            ]);
+            return;
+        }
+
+        // Check if email is valid
+        if (email.length == 0) {
+            console.log('Email is not valid');
+            Alert.alert('Wrong Input!', 'You need to provide a valid Email', [
+            {text: 'OK'},
+            ]);
+            return;
+        }
+
+        // Check if username is valid
+        if (username.length == 0) {
+            console.log('Username is not valid');
+            Alert.alert('Wrong Input!', 'You need to provide a valid Username', [
+            {text: 'OK'},
+            ]);
+            return;
+        }
+
+        // Password Missmatch
+        if (password != confirm_password) {
+            console.log('Password is not valid');
+            Alert.alert('Error!', 'Passowrd matching failed', [
+            {text: 'OK'},
+            ]);
+            return;
+        }
+
+        // Construct the Json body for the request
+        const js = '{"name":"' + username + '", "email":"' + email + '", "password":"' + password + '"}';
+        console.log(js);
+
         try {
-            // 1 - Respone variable from the API
-            const response = await fetch(BASE_URL + 'api/users/register', {
+            // 1 - Get the response from the API
+            const response = await fetch(BASE_URL + 'api/user/signup/' + invitationCode, {
                 method: 'POST',
                 body: js,
                 headers: {'Content-Type': 'application/json'},
@@ -172,13 +250,8 @@ const RegisterScreen = ({navigation}) => {
 
             // 3 - Processing the response
             // User successfully added to the database
-            if (res.name === username) {
-                var user = {
-                    firstName: res.firstName,
-                    lastName: res.lastName,
-                    id: res.id,
-                };
-
+            if (res.response) {
+                console.log("Registration Succeeded");
                 //setMessage('');
                 setData({
                     ...data,
@@ -187,35 +260,28 @@ const RegisterScreen = ({navigation}) => {
                 // Show an alert box
                 Alert.alert(
                     'Medicine Tracking Registration',
-                    'You have been Succesfully Registred\nUsername: ' +
-                    res.name +
-                    '\nEmail: ' +
-                    res.email, 
+                    'You have been Succesfully Registred!', 
                     [{text: 'OK'}],
                 );
-
                 navigation.navigate('LoginScreen');
                 return;
-                // TODO: Direct the user to the main screen
             }
-            // User wss not added to the database
+            // User wss not registred
             else {
+                console.log("Registration failed");
                 setData({
                     ...data,
-                    message: 'User failed to register',
+                    message: res.message,
                 });
-                if (res.email != undefined) {
-                    Alert.alert('Error', res.email, [{text: 'OK'}]);
-                    return;
-                } else if (res.name != undefined) {
-                    Alert.alert('Error', res.name, [{text: 'OK'}]);
-                    return;
-                } else if (res.password != undefined) {
-                    Alert.alert('Error', res.password, [{text: 'OK'}]);
-                    return;
-                }
+                // Show an alert box
+                Alert.alert(
+                    'Error',
+                    res.message, 
+                    [{text: 'OK'}],
+                );
             }
         } catch (e) {
+            console.log(e.message);
             Alert.alert('Error', e.toString(), [{text: 'OK'}]);
             return;
         }
@@ -250,27 +316,43 @@ const RegisterScreen = ({navigation}) => {
             </Animatable.View>
 
             <View style={styles.registerContainer}>
+                <View style={styles.action}>
+                    <Feather name={'send'} style={styles.textBoxIcon} />
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder={'Invitation Code'}
+                        placeholderTextColor={'#868686'}
+                        onChangeText={val => invitationCodeInputChange(val)}
+                        onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
+                    />
+                    {data.check_invitationCodeInputChange ? (
+                        <Animatable.View animation="bounceIn">
+                        <Feather name="check-circle" color="#0094FF" size={22} />
+                        </Animatable.View>
+                    ) : null}
+                </View>
+
                 {/*email*/}
                 <View style={styles.action}>
-                <Feather name={'mail'} style={styles.textBoxIcon} />
-                <TextInput
-                    style={styles.textInput}
-                    placeholder={'email'}
-                    placeholderTextColor={'#868686'}
-                    onChangeText={val => emailInputChange(val)}
-                    onEndEditing={e => handleValidEmail(e.nativeEvent.text)}
-                />
-                {data.check_emailInputChange ? (
-                    <Animatable.View animation="bounceIn">
-                    <Feather name="check-circle" color="#0094FF" size={22} />
-                    </Animatable.View>
-                ) : null}
+                    <Feather name={'mail'} style={styles.textBoxIcon} />
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder={'email'}
+                        placeholderTextColor={'#868686'}
+                        onChangeText={val => emailInputChange(val)}
+                        onEndEditing={e => handleValidEmail(e.nativeEvent.text)}
+                    />
+                    {data.check_emailInputChange ? (
+                        <Animatable.View animation="bounceIn">
+                        <Feather name="check-circle" color="#0094FF" size={22} />
+                        </Animatable.View>
+                    ) : null}
                 </View>
                 {/*Show error messgae for a non valid email*/}
                 {data.isValidEmail ? null : (
-                <Animatable.View animation="fadeInLeft" duration={500}>
-                    <Text style={styles.errorMsg}>email must be 10 characters long.</Text>
-                </Animatable.View>
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                        <Text style={styles.errorMsg}>email must be 10 characters long.</Text>
+                    </Animatable.View>
                 )}
 
                 {/*UserName*/}
@@ -354,10 +436,11 @@ const RegisterScreen = ({navigation}) => {
                     style={styles.registerButton}
                     onPress={() => {
                         registerHandle(
-                        data.email,
-                        data.username,
-                        data.password,
-                        data.confirm_password,
+                            data.invitationCode,
+                            data.email,
+                            data.username,
+                            data.password,
+                            data.confirm_password,
                         );
                     }}
                 />
@@ -365,7 +448,6 @@ const RegisterScreen = ({navigation}) => {
         </View>
     );
 };
-
 
 
 
@@ -397,8 +479,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 20,
-        paddingBottom: 20,
-        paddingVertical: 60,
+        paddingVertical: 50,
     },
 
     title: {
@@ -408,13 +489,14 @@ const styles = StyleSheet.create({
     },
 
     registerButton: {
-        marginVertical: 23,
+        marginTop: 25,
     },
 
     textInput: {
         fontSize: 18,
         flex: 1,
-        marginTop: Platform.OS === 'ios' ? 0 : -12,
+        // marginTop: Platform.OS === 'ios' ? 0 : -12,
+        marginTop: 0,
         paddingLeft: 10,
         color: '#000000',
     },
@@ -425,10 +507,13 @@ const styles = StyleSheet.create({
     },
 
     action: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '95%',
         flexDirection: 'row',
-        marginTop: 10,
+        marginTop: 15,
         paddingHorizontal: 15,
-        paddingVertical: 10,
+        paddingVertical: 8,
         borderWidth: 1,
         borderRadius: 8,
         borderColor: '#868686',

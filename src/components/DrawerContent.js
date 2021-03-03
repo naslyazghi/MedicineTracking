@@ -8,38 +8,39 @@ import Feather from 'react-native-vector-icons/Feather';
 // import {SettingsScreen} from '../screens/SettingsScreen';
 // import {OrdersTab} from '../tabNavigators/OrdersTab';
 // import {inventoryTab} from '../tabNavigators/InventoryTab';
-// import {AuthContext} from '../contexts/AuthContext';
+import {AuthContext} from '../contexts/AuthContext';
+import jwt_decode from "jwt-decode";
+
+
+
+
+
+
 
 export function DrawerContent(props) {
-
+  
   const [isDarkTheme, setIsDarkTheme] = React.useState(false);
-
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
   };
+  
+  const {signOut} = React.useContext(AuthContext);
 
-//   const {signOut} = React.useContext(AuthContext);
+  //Decode the token
+  // const userToken = global.userTokenConst;
+  // const decoded = jwt_decode(userToken);
+  //console.log(decoded);
+  // var user = {
+  //   id: decoded.user.id,
+  //   username: decoded.user.name,
+  //   email: decoded.user.email,
+  // };
 
-//   const token = global.userTokenConst;
-
-// Decode the token
-//   var jwt_decode = require('jwt-decode');
-//   var decoded = jwt_decode(token);
-
-  // Create User
-//   var user = {
-//     id: decoded.id,
-//     username: decoded.name,
-//     email: decoded.email,
-//   };
-
-
-var user = {
-    id: '123456',
-    username: 'UserName',
-    email: 'name@ucf.edu',
+  var user = {
+    id: "123",
+    username: "Username",
+    email: "Email",
   };
-
 
 
   return (
@@ -79,9 +80,10 @@ var user = {
             <DrawerItem
               style = {styles.drawerItem}
               icon={({color, size}) => (
-                <Feather name="home" color={color} size={size} />
+                <Feather name="shopping-bag" color={'#0094FF'} size={30} />
               )}
               label="Orders"
+              labelStyle={styles.drawerElement}
               onPress={() => {
                 props.navigation.navigate('OrdersTab');
               }}
@@ -90,10 +92,12 @@ var user = {
             {/* 2 - Inventory tab */}
             <DrawerItem
             style = {styles.drawerItem}
+            overlaycolor
               icon={({color, size}) => (
-                <Feather name="smile" color={color} size={size} />
+                <Feather name="layers" color={'#0094FF'} size={30} />
               )}
               label="Inventory"
+              labelStyle={styles.drawerElement}
               onPress={() => {
                 props.navigation.navigate('InventoryTab');
               }}
@@ -103,9 +107,10 @@ var user = {
             <DrawerItem
               style = {styles.drawerItem}
               icon={({color, size}) => (
-                <Feather name="settings" color={color} size={size} />
+                <Feather name="send" color={'#0094FF'} size={30} />
               )}
               label="Invitation Code"
+              labelStyle={styles.drawerElement}
               onPress={() => {
                 props.navigation.navigate('InvitationCode');
               }}
@@ -115,9 +120,10 @@ var user = {
             <DrawerItem
             style = {styles.drawerItem}
               icon={({color, size}) => (
-                <Feather name="settings" color={color} size={size} />
+                <Feather name="settings" color={'#0094FF'} size={30} />
               )}
               label="Settings"
+              labelStyle={styles.drawerElement}
               onPress={() => {
                 props.navigation.navigate('Settings');
               }}
@@ -127,9 +133,10 @@ var user = {
             <DrawerItem
             style = {styles.drawerItem}
               icon={({color, size}) => (
-                <Feather name="code" color={color} size={size} />
+                <Feather name="code" color={'#0094FF'} size={30} />
               )}
               label="About"
+              labelStyle={styles.drawerElement}
               onPress={() => {
                 props.navigation.navigate('About');
               }}
@@ -159,12 +166,13 @@ var user = {
         <DrawerItem
           style = {styles.logOutBox}
           icon={({color, size}) => (
-            <Feather name="log-out" color={color} size={size} />
+            <Feather name="log-out" color={'white'} size={30} />
           )}
           label="Sign Out"
-          // onPress={() => {
-          //   signOut();
-          // }}
+          labelStyle = {styles.title}
+          onPress={() => {
+            signOut();
+          }}
         />
       </Drawer.Section>
     </View>
@@ -205,6 +213,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 20,
+  },
+  drawerElement: {
+    fontSize: 16,
+    color: 'black',
   },
   paragraph: {
     fontWeight: 'bold',
