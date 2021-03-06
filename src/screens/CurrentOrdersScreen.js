@@ -11,6 +11,7 @@ export function CurrentOrdersScreen({navigation}) {
   //const [currentOrders, setCurrentOrders] = React.useState(null);
 
   // Mock the current orders for testing the UI
+
   const orders = [
     {
       id: '11111',
@@ -104,11 +105,112 @@ export function CurrentOrdersScreen({navigation}) {
     },
   ];
 
+  const orderExample = [
+    { 
+      id: '9125334514',
+      path: '/home/inv1/inv12',
+      user: 'Jason Smith',
+      order_date: '2021-02-14T19:07:38.511',
+      status: 'Arriving Late',
+      expectedDelivery: '05-10-2021',
+      trackingNumber: '64212466665451288',
+
+      items: [
+        {
+          quantity: 5,
+          product: {
+              identifiers: [
+                  {key: 'Name', value: 'Aspirin'}
+              ]
+          },
+          desired: {
+            identifiers: [
+              {key: 'Name', value: 'Salve'}
+            ]
+          }
+        },
+        {
+          quantity: 3,
+          product: {
+            identifiers: [
+              {key: 'Name', value: 'Bandage'},
+              {key: 'NDC', value: '123-1245-23'}
+            ]
+          },
+          desired: {
+            identifiers: [
+              {key: 'Name', value: 'Salve'}
+            ]
+          }
+        }
+      ],
+      
+      log: [
+        {
+          date: '2021-02-14T20:09:22.235',
+          message: 'order approved by mlc',
+        },
+        {
+          date: '2021-02-17T09:23:21.934',
+          message: 'order arrived at mlc',
+        },
+      ],
+    },
+
+    { 
+      id: '13654886599',
+      path: '/home/inv2/inv22',
+      user: 'Adam Clark',
+      order_date: '2021-02-14T19:07:38.511',
+      status: 'Shipped',
+      expectedDelivery: '03-05-2021',
+      trackingNumber: '12254656984232156',
+      items: [
+        {
+          product: {
+              identifiers: [
+                  {key: 'Name', value: 'Tylenol'}
+              ]
+          },
+          quantity: 5,
+          desired: {
+            identifiers: [
+              {key: 'Name', value: 'Salve'}
+            ]
+          }
+        },
+        {
+          product: {
+            identifiers: [
+              {key: 'Name', value: 'Bandage'},
+              {key: 'NDC', value: '123-1245-23'}
+            ]
+          },
+          quantity: 3,
+          desired: {
+            identifiers: [
+              {key: 'Name', value: 'Salve'}
+            ]
+          }
+        }
+      ],
+      log: [
+        {
+          date: '2021-02-14T20:09:22.235',
+          message: 'Order approved by mlc',
+        },
+        {
+          date: '2021-02-17T09:23:21.934',
+          message: 'Order arrived at mlc',
+        },
+      ],
+    }
+  ]
   //setCurrentOrders(orders);
 
   return (
     <View style={styles.container}>
-      <CurrentOrdersList itemList={orders}/>
+      <CurrentOrdersList itemList={orderExample}/>
     </View>
   );
 };

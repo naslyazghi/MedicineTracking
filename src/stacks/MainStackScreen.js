@@ -7,7 +7,7 @@ import {InventoryTab} from '../tabNavigators/InventoryTab';
 import {InvitationCodeScreen} from '../screens/InvitationCodeScreen';
 import {SettingsScreen} from '../screens/SettingsScreen';
 import {AboutScreen} from '../screens/AboutScreen';
-
+import {CurrentOrderDetailsScreen} from '../screens/CurrentOrderDetailsScreen'
 
 const Drawer = createDrawerNavigator();
 
@@ -18,7 +18,9 @@ const MainStackScreen = ({navigation}) => (
         <Drawer.Screen name="InvitationCode" component={InvitationCodeScreen}/>
         <Drawer.Screen name="Settings" component={SettingsScreen}/>
         <Drawer.Screen name="About" component={AboutScreen}/>
+        <Drawer.Screen name="CurrentOrderDetails" component={CurrentOrderDetailsScreen}/>
     </Drawer.Navigator>
+    
 );
 
 export default MainStackScreen;
