@@ -6,6 +6,7 @@ import CurrentOrdersList from '../components/Lists/CurrentOrdersList'
 
 
 
+
 export function CurrentOrdersScreen({navigation}) {
   // Set the current orders variable
   //const [currentOrders, setCurrentOrders] = React.useState(null);

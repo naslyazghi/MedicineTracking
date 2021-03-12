@@ -5,9 +5,11 @@ import {Avatar} from 'react-native-elements';
 import {CurrentOrderDetailsScreen} from '../../screens/CurrentOrderDetailsScreen'
 import Moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
+import Feather from 'react-native-vector-icons/Feather';
 
 const stat = null;
 Moment.locale('en');
+
 
 // const CurrentOrdersListItem = ({id, selectedId, orderNumber, orderDate, trackingNumber, sender, receiver, status, expectedDelivery, onPress, style,}) => (
 //     <TouchableOpacity onPress={onPress} >
@@ -70,8 +72,11 @@ Moment.locale('en');
 
 
 // const navigation = useNavigation(),
-const CurrentOrdersListItem = ({id, selectedId, onPress, onLongPress, style, order}) => (
-    <TouchableOpacity onPress={onPress} onLongPress={onLongPress}>
+const CurrentOrdersListItem = ({id, selectedId, onPress, onLongPress, style, order, navigation}) => (
+    <TouchableOpacity 
+        onPress={onPress} 
+        onLongPress={onLongPress}
+        >
         {
             id == selectedId ?
             <View style={[styles.container, style]}>
@@ -104,6 +109,9 @@ const CurrentOrdersListItem = ({id, selectedId, onPress, onLongPress, style, ord
                         <Text style={styles.listItemValue}>{order.expectedDelivery}</Text>
                     </Text>
                 </View>
+                <TouchableOpacity onPress={() => navigation.navigate('CurrentOrderDetails', {order: order})}>
+                    <Feather name={"maximize-2"} style={styles.iconButton} />
+                </TouchableOpacity>
                 {/* <View style={styles.container_status}>
                     {status == "Arriving Late" || status == "Unknown" ?
                         <Text style={styles.warning}>{status}</Text>
@@ -194,6 +202,12 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: 'normal',
         color: '#5f6b73',
+    },
+
+    iconButton: {
+        color: '#0094FF', 
+        fontSize: 25,
+        padding: 1,
     },
     // sender: {
     //     fontSize: 14,

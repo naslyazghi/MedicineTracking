@@ -8,6 +8,7 @@ import {InvitationCodeScreen} from '../screens/InvitationCodeScreen';
 import {SettingsScreen} from '../screens/SettingsScreen';
 import {AboutScreen} from '../screens/AboutScreen';
 import {CurrentOrderDetailsScreen} from '../screens/CurrentOrderDetailsScreen'
+import {CurrentOrderDetailsEditableScreen} from '../screens/CurrentOrderDetailsEditableScreen'
 
 const Drawer = createDrawerNavigator();
 
@@ -19,6 +20,7 @@ const MainStackScreen = ({navigation}) => (
         <Drawer.Screen name="Settings" component={SettingsScreen}/>
         <Drawer.Screen name="About" component={AboutScreen}/>
         <Drawer.Screen name="CurrentOrderDetails" component={CurrentOrderDetailsScreen}/>
+        <Drawer.Screen name="CurrentOrderDetailsEditable" component={CurrentOrderDetailsEditableScreen}/>
     </Drawer.Navigator>
     
 );

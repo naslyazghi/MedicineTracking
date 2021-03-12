@@ -12,13 +12,13 @@ export function FilledButton({title, style, onPress}) {
 const styles = StyleSheet.create({
     container: {
     backgroundColor: '#0094FF',
-    width: '60%',
-    paddingVertical: 15,
+    width: '45%',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
     marginTop: 90,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
-    padding: 20,
+    borderRadius: 6,
     },
 
     text: {

@@ -7,7 +7,7 @@ import {FilledButton} from '../components/FilledButton';
 import Moment from 'moment';
 import { upperCaseFirst } from "upper-case-first";
 
-export function CurrentOrderDetailsScreen({route, navigation}) {
+export function CurrentOrderDetailsEditableScreen({route, navigation}) {
     const {order} = route.params;
     const items = order.items;
     console.log("items = " + items);
@@ -16,8 +16,8 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
     return (
         <View style={styles.container}>
             <View style={styles.actionBar}>
-                <Text style={styles.heading1}>Order #: {order.id}</Text>
-                <Text style={styles.heading2}>{order.status}</Text>
+                <Text style={styles.heading1}>Edit Order</Text>
+                <Text style={styles.heading2}>{order.id}</Text>
                 <Feather
                     style={styles.backIcon}
                     name={'arrow-left-circle'}
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     },
 
     heading2: {
-        fontSize: 27,
+        fontSize: 24,
         color: 'white',
     },
 

@@ -4,11 +4,14 @@ import {View, FlatList, StyleSheet, SafeAreaView, Button, Text, TouchableWithout
 import CurrentOrdersListItem from '../ListItems/CurrentOrdersListItem';
 import {createStackNavigator} from '@react-navigation/stack';
 import {CurrentOrderDetailsScreen} from '../../screens/CurrentOrderDetailsScreen'
+import {CurrentOrderDetailsEditableScreen} from '../../screens/CurrentOrderDetailsEditableScreen'
 import {useNavigation} from '@react-navigation/native';
 
 //global.groupId = null;
 
 const CurrentOrdersList = ({itemList}) => {
+    var backCount = 0;
+    var backTimer;
     const navigation = useNavigation();
     //console.log(itemList);
     const [selectedId, setSelectedId] = React.useState(null);
@@ -28,9 +31,10 @@ const CurrentOrdersList = ({itemList}) => {
                 selectedId={selectedId}
                 // image_url={'https://homepages.cae.wisc.edu/~ece533/images/cat.png'}
                 onPress={() => {setSelectedId(item.id)}}
-                onLongPress={() => navigation.navigate('CurrentOrderDetails', {order: item})}
+                onLongPress={() => navigation.navigate('CurrentOrderDetailsEditable', {order: item})}
                 style={{borderColor, borderWidth}}
                 order={item}
+                navigation={navigation}
             />
         );
     };
