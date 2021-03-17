@@ -118,6 +118,7 @@ export function CurrentOrdersScreen({navigation}) {
 
       items: [
         {
+          id: 1,
           quantity: 5,
           product: {
               identifiers: [
@@ -131,6 +132,7 @@ export function CurrentOrdersScreen({navigation}) {
           }
         },
         {
+          id: 2,
           quantity: 3,
           product: {
             identifiers: [
@@ -168,10 +170,11 @@ export function CurrentOrdersScreen({navigation}) {
       trackingNumber: '12254656984232156',
       items: [
         {
+          id: 1,
           product: {
-              identifiers: [
-                  {key: 'Name', value: 'Tylenol'}
-              ]
+            identifiers: [
+                {key: 'Name', value: 'Tylenol'}
+            ]
           },
           quantity: 5,
           desired: {
@@ -181,6 +184,7 @@ export function CurrentOrdersScreen({navigation}) {
           }
         },
         {
+          id: 2,
           product: {
             identifiers: [
               {key: 'Name', value: 'Bandage'},

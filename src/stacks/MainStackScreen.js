@@ -8,7 +8,7 @@ import {InvitationCodeScreen} from '../screens/InvitationCodeScreen';
 import {SettingsScreen} from '../screens/SettingsScreen';
 import {AboutScreen} from '../screens/AboutScreen';
 import {CurrentOrderDetailsScreen} from '../screens/CurrentOrderDetailsScreen'
-import {CurrentOrderDetailsEditableScreen} from '../screens/CurrentOrderDetailsEditableScreen'
+import CurrentOrderDetailsEditableScreen from '../screens/CurrentOrderDetailsEditableScreen'
 
 const Drawer = createDrawerNavigator();
 
