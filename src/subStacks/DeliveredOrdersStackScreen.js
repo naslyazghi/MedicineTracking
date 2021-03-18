@@ -2,6 +2,7 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {DeliveredOrdersScreen} from '../screens/DeliveredOrdersScreen';
+import BarCodeScanner from '../screens/BarcodeScanner'
 import Feather from 'react-native-vector-icons/Feather';
 import {View, Text, StyleSheet, Image} from 'react-native';
 
@@ -31,9 +32,9 @@ const DeliveredOrdersStackScreen = ({route, navigation}) => {
           headerRight: () => (
             <Feather
               style={styles.headerRight}
-              name="plus"
+              name="map-pin"
               size={26}
-              //onPress={() => navigation.navigate('AddGroup', {token: token})}
+              onPress={() => navigation.navigate("Barcode Scanner")}
             />
           ),
           headerStyle: {

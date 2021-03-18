@@ -9,6 +9,7 @@ import {SettingsScreen} from '../screens/SettingsScreen';
 import {AboutScreen} from '../screens/AboutScreen';
 import {CurrentOrderDetailsScreen} from '../screens/CurrentOrderDetailsScreen'
 import CurrentOrderDetailsEditableScreen from '../screens/CurrentOrderDetailsEditableScreen'
+import BarCodeScanner from '../screens/BarcodeScanner'
 
 const Drawer = createDrawerNavigator();
 
@@ -21,6 +22,7 @@ const MainStackScreen = ({navigation}) => (
         <Drawer.Screen name="About" component={AboutScreen}/>
         <Drawer.Screen name="CurrentOrderDetails" component={CurrentOrderDetailsScreen}/>
         <Drawer.Screen name="CurrentOrderDetailsEditable" component={CurrentOrderDetailsEditableScreen}/>
+        <Drawer.Screen name="Barcode Scanner" component={BarCodeScanner}/>
     </Drawer.Navigator>
     
 );

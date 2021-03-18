@@ -31,9 +31,9 @@ const InventoryItemsStackScreen = ({route, navigation}) => {
                 headerRight: () => (
                     <Feather
                         style={styles.headerRight}
-                        name="plus"
+                        name="map-pin"
                         size={26}
-                        //onPress={() => navigation.navigate('AddGroup', {token: token})}
+                        onPress={() => navigation.navigate("Barcode Scanner")}
                     />
                 ),
                 headerStyle: {

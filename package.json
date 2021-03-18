@@ -48,7 +48,8 @@
     "react-native-web": "~0.13.12",
     "react-navigation-drawer": "^2.6.0",
     "rn-double-click": "^1.0.3",
-    "upper-case-first": "^2.0.2"
+    "upper-case-first": "^2.0.2",
+    "expo-barcode-scanner": "~9.1.0"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"
