@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
+//add back button to this screen or add toolbar (currentorderdetailseditablescreeen for example)
+
+
 const qrcode_type = {
     "order": (parsed_data, navigation) => {
         //Add functionality to update status
@@ -17,7 +20,7 @@ const qrcode_type = {
             // ex) order was recieved at MLC
             // ex) order was switched to outgoing shipment inventory
 
-        //add notifications for those ^^^^
+        //add notifications for those ^^^^ (put into own folder.. use it here or use it in a different part of app)
         navigation.navigate(parsed_data.redirect);
     },
     "product": (parsed_data) => {
@@ -41,8 +44,10 @@ export default function App({navigation}) {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    //alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    console.log(data)
     parsed_data = JSON.parse(data);
+
     if("type" in parsed_data) {
         qrcode_type[parsed_data.type](parsed_data, navigation);
     }

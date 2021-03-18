@@ -9,6 +9,7 @@ import Feather from 'react-native-vector-icons/Feather';
 
 const NewOrderScreen = ({navigation}) => {
   const [selectedPath, setSelectedPath] = useState('');
+  var pathList = [];
   pathList = [
     "Path1", 
     "Path2", 

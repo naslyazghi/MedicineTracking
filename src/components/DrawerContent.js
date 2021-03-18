@@ -103,6 +103,21 @@ export function DrawerContent(props) {
               }}
             />
 
+            {/* 6 - QR Code */}
+            <DrawerItem
+            style = {styles.drawerItem}
+              icon={({color, size}) => (
+                <Feather name="aperture" color={'#0094FF'} size={30} />
+              )}
+              label="QR Code"
+              labelStyle={styles.drawerElement}
+              onPress={() => {
+                props.navigation.navigate('QRTab');
+              }}
+            />
+
+            </Drawer.Section>
+          
             {/* 3 - Invitation Code tab */}
             <DrawerItem
               style = {styles.drawerItem}
@@ -141,8 +156,8 @@ export function DrawerContent(props) {
                 props.navigation.navigate('About');
               }}
             />
-          </Drawer.Section>
-          
+            
+
           {/* Second section of the drawer items, Preferences  */}
           <Drawer.Section title="Preferences" >
             <TouchableRipple
