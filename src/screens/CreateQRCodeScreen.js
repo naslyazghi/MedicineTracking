@@ -5,7 +5,6 @@ import {ScrollView, Text} from 'react-native';
 import {FilledButton} from '../components/FilledButton';
 import QRCode from 'react-native-qrcode-svg';
 import * as Print from 'expo-print';
-//import * as Sharing from 'expo-sharing';
 import {
     AppRegistry,
     StyleSheet,
@@ -15,7 +14,7 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 
 class QRScreen extends Component {
-
+  svg;
   state = {
     type: 'order',
     //can you change num to say order number if selected order
@@ -23,15 +22,14 @@ class QRScreen extends Component {
     num: '', 
     qrData: ''
   };
+
   print() {
-   // const {uri} = 
     Print.printAsync({
       html: `
          <h3>Hello World</h3>
          <img src="data:image/jpeg;base64,${this.state.qrData}"/>
        `
     });
-  //  Sharing.shareAsync(uri);
   }
   getDataURL() {
     this.svg.toDataURL(this.callback);
@@ -76,7 +74,7 @@ class QRScreen extends Component {
 
         <Text style={styles.heading}>Generated QR Code</Text>
         <QRCode
-          value={this.state.type.length > 0 ? JSON.stringify(this.state) : "improper QR"}
+          value={JSON.stringify(this.state) + this.state.qrData}
           size={200}
           bgColor='#000000'
           fgColor='#FFFFFF'
