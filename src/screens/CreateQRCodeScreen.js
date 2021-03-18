@@ -24,15 +24,14 @@ class QRScreen extends Component {
     num: '', 
     qrData: ""
   };
-  
-
-
-
+ 
   componentDidMount () {
     this.getDataURL(); // => Calling this in here to make sure the QRCode component did mount
   }
 
   print = () => {
+    this.getDataURL();
+    console.log("print");
     Print.printAsync({
       html: `
          <img src="data:image/jpeg;base64,${this.state.qrData}"/>
@@ -45,17 +44,10 @@ class QRScreen extends Component {
   }
   
   callback = (dataURL) => {
+    console.log("callback")
     this.setState({qrData: dataURL});
   }
-  ///!!!!!
-  ///!!!!
-                    ///FIND A WAY TO UPDATE THIS!!!!!
-////!!!!!
-////!!!!!!
-  value = {
-    type: this.state.type,
-    num: this.state.num
-  }
+
 
 
   render() {
@@ -93,17 +85,18 @@ class QRScreen extends Component {
 
         <Text style={styles.heading}>Generated QR Code</Text>
         <QRCode
-        //need to put in herwe this.state.type and this.state.num
-          value={JSON.stringify(this.value)}
+          value = {JSON.stringify({type: this.state.type, num: this.state.num})}
           size={200}
           bgColor='#000000'
           fgColor='#FFFFFF'
-          getRef={(c) => (this.svg = c)}
+          getRef= {(c) => {this.svg = c}}
         />
         <FilledButton
           title={'Print'}
           style={styles.loginButton}
           onPress={() => {
+            alert(this.state.num);
+            this.getDataURL();
              this.print();
           }}
         />
