@@ -9,35 +9,54 @@ import {
     AppRegistry,
     StyleSheet,
     View,
-    TextInput
+    TextInput, 
+    Share
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+
+
+
 
 class QRScreen extends Component {
   svg;
   state = {
     type: 'order',
-    //can you change num to say order number if selected order
-    //and NDC if selected product?
     num: '', 
-    qrData: ''
+    qrData: ""
   };
+  
 
-  print() {
+
+
+  componentDidMount () {
+    this.getDataURL(); // => Calling this in here to make sure the QRCode component did mount
+  }
+
+  print = () => {
     Print.printAsync({
       html: `
-         <h3>Hello World</h3>
          <img src="data:image/jpeg;base64,${this.state.qrData}"/>
        `
     });
   }
+ 
   getDataURL() {
     this.svg.toDataURL(this.callback);
   }
   
-  callback(dataURL) {
-    console.log(dataURL);
+  callback = (dataURL) => {
+    this.setState({qrData: dataURL});
   }
+  ///!!!!!
+  ///!!!!
+                    ///FIND A WAY TO UPDATE THIS!!!!!
+////!!!!!
+////!!!!!!
+  value = {
+    type: this.state.type,
+    num: this.state.num
+  }
+
 
   render() {
 
@@ -74,7 +93,8 @@ class QRScreen extends Component {
 
         <Text style={styles.heading}>Generated QR Code</Text>
         <QRCode
-          value={JSON.stringify(this.state) + this.state.qrData}
+        //need to put in herwe this.state.type and this.state.num
+          value={JSON.stringify(this.value)}
           size={200}
           bgColor='#000000'
           fgColor='#FFFFFF'
