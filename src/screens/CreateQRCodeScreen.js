@@ -4,8 +4,8 @@ import React, { Component } from 'react'
 import {ScrollView, Text} from 'react-native';
 import {FilledButton} from '../components/FilledButton';
 import QRCode from 'react-native-qrcode-svg';
-import Print from 'expo-print';
-import Sharing from 'expo-sharing';
+import * as Print from 'expo-print';
+//import * as Sharing from 'expo-sharing';
 import {
     AppRegistry,
     StyleSheet,
@@ -18,20 +18,20 @@ class QRScreen extends Component {
 
   state = {
     type: 'order',
-    //can you chnage num to say order number if selected order
+    //can you change num to say order number if selected order
     //and NDC if selected product?
     num: '', 
-    qrData = ''
+    qrData: ''
   };
-  print = () => {
-    
-    const {uri} = Print.printToFileAsync({
+  print() {
+   // const {uri} = 
+    Print.printAsync({
       html: `
          <h3>Hello World</h3>
          <img src="data:image/jpeg;base64,${this.state.qrData}"/>
        `
     });
-    Sharing.shareAsync(uri);
+  //  Sharing.shareAsync(uri);
   }
   getDataURL() {
     this.svg.toDataURL(this.callback);
