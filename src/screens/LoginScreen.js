@@ -179,10 +179,7 @@ const LoginScreen = ({navigation}) => {
                     'Login Successful\nid: ' +
                     user.id +
                     '\nname: ' +
-                    user.username +
-                    '\nemail: ' +
-                    user.email,
-                    +[{text: 'OK'}],
+                    user.name
                 );
 
                 // lOGIN the user
