@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
       color: 'white',
     }
 });
- 
+
 AppRegistry.registerComponent('QRScreen', () => QRScreen);
- 
+
 module.exports = QRScreen;

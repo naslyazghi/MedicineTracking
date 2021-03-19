@@ -28,7 +28,7 @@ const jwt_decode = require('jwt-decode');
 function App() {
 
   // --------------------------
-  // 1 - LOGIN HANDELING
+  // 1 - LOGIN HANDLING
   // --------------------------
 
   const initialLoginState = {
@@ -150,27 +150,27 @@ function App() {
 
 
 
-  // return (
-  //   // Navigation container is reponsible for controlling the themes, states, restoring states
-  //   <AuthContext.Provider value={authContext}>
-  //     <NavigationContainer>
-  //       {/* Check if user is logged in */}
-  //       {loginState.userToken !== null ? (
-  //         <MainStackScreen/>
-  //       ) : (
-  //         <AuthenticationStackScreen />
-  //       )}
-  //     </NavigationContainer>
-  //   </AuthContext.Provider>
-  // );
-
   return (
+    // Navigation container is responsible for controlling the themes, states, restoring states
     <AuthContext.Provider value={authContext}>
-    <NavigationContainer>
-        <MainStackScreen/>
-    </NavigationContainer>
-  </AuthContext.Provider>
+      <NavigationContainer>
+        {/* Check if user is logged in */}
+        {loginState.userToken !== null ? (
+          <MainStackScreen/>
+        ) : (
+          <AuthenticationStackScreen />
+        )}
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
+
+  // return (
+  //   <AuthContext.Provider value={authContext}>
+  //   <NavigationContainer>
+  //       <MainStackScreen/>
+  //   </NavigationContainer>
+  // </AuthContext.Provider>
+  // );
 }
 
 

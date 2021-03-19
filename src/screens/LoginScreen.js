@@ -99,7 +99,7 @@ const LoginScreen = ({navigation}) => {
     };
 
 
-    // 3 - lOGIN HANDELING
+    // 3 - lOGIN HANDLING
     const loginHandle = async (email, password) => {
         // Construct the Json body for the request
         const js = '{"email":"' + email + '","password":"' + password + '"}';
@@ -115,7 +115,7 @@ const LoginScreen = ({navigation}) => {
         }
 
         try {
-            // 1 - Respone variable from the API
+            // 1 - Response variable from the API
             console.log("Logging in...");
             const response = await fetch(BASE_URL + 'api/user/login', {
                 method: 'POST',
@@ -152,7 +152,7 @@ const LoginScreen = ({navigation}) => {
                 // Decode the token
                 try{
                     var decoded = jwt_decode(token);
-                    console.log(decoded);
+                    console.log("decoded = " + JSON.stringify(decoded));
                 }
                 catch(e){
                     console.log(e.message);
@@ -167,8 +167,8 @@ const LoginScreen = ({navigation}) => {
 
                 // Store the user Info
                 var user = {
-                    id: decoded.user.id,
-                    username: decoded.user.name,
+                    id: decoded.user._id,
+                    name: decoded.user.name,
                     email: decoded.user.email,
                     userToken: token,
                 };
@@ -179,10 +179,7 @@ const LoginScreen = ({navigation}) => {
                     'Login Successful\nid: ' +
                     user.id +
                     '\nname: ' +
-                    user.username +
-                    '\nemail: ' +
-                    user.email,
-                    +[{text: 'OK'}],
+                    user.name
                 );
 
                 // lOGIN the user
