@@ -1,4 +1,4 @@
-Beginners guide to running the app:
+--Beginners guide to running the app:
 
 1) cd into the folder you want to download the repo inton
 2) git clone --branch master https://github.com/naslyazghi/MedicineTracking.git
