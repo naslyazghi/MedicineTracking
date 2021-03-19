@@ -22,7 +22,8 @@ class QRScreen extends Component {
   state = {
     type: 'order',
     num: '', 
-    qrData: ""
+    qrData: "",
+    print: false,
   };
  
   componentDidMount () {
@@ -30,11 +31,11 @@ class QRScreen extends Component {
   }
 
   print = () => {
-    this.getDataURL();
-    console.log("print");
+    if (!this.state.print) return
+    this.setState({print: true})
     Print.printAsync({
       html: `
-         <img src="data:image/jpeg;base64,${this.state.qrData}"/>
+      <img src="data:image/jpeg;base64,${this.state.qrData}"/>
        `
     });
   }
@@ -44,8 +45,7 @@ class QRScreen extends Component {
   }
   
   callback = (dataURL) => {
-    console.log("callback")
-    this.setState({qrData: dataURL});
+    this.setState({qrData: dataURL}, this.print);
   }
 
 
@@ -96,8 +96,8 @@ class QRScreen extends Component {
           style={styles.loginButton}
           onPress={() => {
             alert(this.state.num);
+            this.setState({print: true})
             this.getDataURL();
-             this.print();
           }}
         />
       </View>
