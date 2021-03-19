@@ -1,0 +1,4 @@
+These files contain the ways to navigate through the app
+
+EX) mainstackscreen.js contains the navigation keyword and component of different screens. that way you can use .navigate(keyword) to get 
+from one screen to another

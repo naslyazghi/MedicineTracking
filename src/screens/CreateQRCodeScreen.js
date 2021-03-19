@@ -14,8 +14,10 @@ import {
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+//this is done
+//unless we want to add qr code generation to ims or add more data into qr code
 
-
+//mlc labels package after re-packaging
 
 class QRScreen extends Component {
   svg;
@@ -32,7 +34,7 @@ class QRScreen extends Component {
 
   print = () => {
     if (!this.state.print) return
-    this.setState({print: true})
+    this.setState({print: false})
     Print.printAsync({
       html: `
       <img src="data:image/jpeg;base64,${this.state.qrData}"/>
@@ -95,7 +97,6 @@ class QRScreen extends Component {
           title={'Print'}
           style={styles.loginButton}
           onPress={() => {
-            alert(this.state.num);
             this.setState({print: true})
             this.getDataURL();
           }}

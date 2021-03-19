@@ -1,0 +1,3 @@
+This folder contains some of the icons used in our project
+
+We also use Feather extensively which you can see their capabilities here: https://feathericons.com/
