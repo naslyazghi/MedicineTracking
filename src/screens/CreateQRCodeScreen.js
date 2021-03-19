@@ -32,7 +32,7 @@ class QRScreen extends Component {
 
   print = () => {
     if (!this.state.print) return
-    this.setState({print: true})
+    this.setState({print: false})
     Print.printAsync({
       html: `
       <img src="data:image/jpeg;base64,${this.state.qrData}"/>
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
       color: 'white',
     }
 });
- 
+
 AppRegistry.registerComponent('QRScreen', () => QRScreen);
- 
+
 module.exports = QRScreen;
