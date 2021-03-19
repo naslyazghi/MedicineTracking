@@ -149,12 +149,13 @@ function App() {
 
 
 
-
+/*
   return (
     // Navigation container is responsible for controlling the themes, states, restoring states
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
-        {/* Check if user is logged in */}
+        {/*Check if user is logged in *//*}
+        
         {loginState.userToken !== null ? (
           <MainStackScreen/>
         ) : (
@@ -163,16 +164,15 @@ function App() {
       </NavigationContainer>
     </AuthContext.Provider>
   );
+*/
 
-  // return (
-  //   <AuthContext.Provider value={authContext}>
-  //   <NavigationContainer>
-  //       <MainStackScreen/>
-  //   </NavigationContainer>
-  // </AuthContext.Provider>
-  // );
+   return (
+     <AuthContext.Provider value={authContext}>
+     <NavigationContainer>
+         <MainStackScreen/>
+     </NavigationContainer>
+   </AuthContext.Provider>
+   );
 }
-
-
 
 export default App;

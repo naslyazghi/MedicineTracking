@@ -2,8 +2,6 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import BarCodeScanner from '../screens/BarcodeScanner'
-import QRScreen from '../screens/CreateQRCodeScreen'
 import CreateQRCodeStackScreen from '../subStacks/CreateQRCodeStackScreen'
 import ScanQRCodeStackScreen from '../subStacks/ScanQRCodeStackScreen'
 

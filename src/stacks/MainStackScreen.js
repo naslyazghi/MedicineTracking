@@ -11,6 +11,7 @@ import {CurrentOrderDetailsScreen} from '../screens/CurrentOrderDetailsScreen'
 import CurrentOrderDetailsEditableScreen from '../screens/CurrentOrderDetailsEditableScreen'
 import BarCodeScanner from '../screens/BarcodeScanner'
 import {QRTab} from '../tabNavigators/QRCodeTab'
+import TransitMessageStackScreen from '../subStacks/TransitMessageStackScreen'
 
 const Drawer = createDrawerNavigator();
 
@@ -25,6 +26,7 @@ const MainStackScreen = ({navigation}) => (
         <Drawer.Screen name="CurrentOrderDetailsEditable" component={CurrentOrderDetailsEditableScreen}/>
         <Drawer.Screen name="Barcode Scanner" component={BarCodeScanner}/>
         <Drawer.Screen name="QRTab" component={QRTab}/>        
+        <Drawer.Screen name="TransitMessage" component={TransitMessageStackScreen}/>  
     </Drawer.Navigator>
     
 );
