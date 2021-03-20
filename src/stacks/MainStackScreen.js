@@ -11,7 +11,9 @@ import {CurrentOrderDetailsScreen} from '../screens/CurrentOrderDetailsScreen'
 import CurrentOrderDetailsEditableScreen from '../screens/CurrentOrderDetailsEditableScreen'
 import BarCodeScanner from '../screens/OrderQRScanner'
 import {QRTab} from '../tabNavigators/QRCodeTab'
-import TransitMessageStackScreen from '../subStacks/TransitMessageStackScreen'
+import ScanQRCodeStackScreen from '../subStacks/ScanQRCodeStackScreen'
+import ProductQRStackScreen from '../subStacks/ProductScanQRStackScreen'
+
 
 const Drawer = createDrawerNavigator();
 
@@ -25,8 +27,9 @@ const MainStackScreen = ({navigation}) => (
         <Drawer.Screen name="CurrentOrderDetails" component={CurrentOrderDetailsScreen}/>
         <Drawer.Screen name="CurrentOrderDetailsEditable" component={CurrentOrderDetailsEditableScreen}/>
         <Drawer.Screen name="Barcode Scanner" component={BarCodeScanner}/>
-        <Drawer.Screen name="QRTab" component={QRTab}/>        
-        <Drawer.Screen name="TransitMessage" component={TransitMessageStackScreen}/>  
+        <Drawer.Screen name="QRTab" component={QRTab}/> 
+        <Drawer.Screen name="OrderScanner" component={ScanQRCodeStackScreen}/> 
+        <Drawer.Screen name="ProductScanner" component={ProductQRStackScreen}/> 
     </Drawer.Navigator>
     
 );

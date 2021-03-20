@@ -1,40 +1,31 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import NewOrderScreen from '../screens/NewOrderScreen';
+import ProductQRScanner from '../screens/ProductQRScanner'
 import Feather from 'react-native-vector-icons/Feather';
 import {View, Text, StyleSheet, Image} from 'react-native';
 
-const NewOrderStack = createStackNavigator();
+const ProductQRStack = createStackNavigator();
 
 // Main Stack
-const NewOrderStackScreen = ({route, navigation}) => {
+const ProductQRStackScreen = ({route, navigation}) => {
   //const {token} = route.params;
   //console.log('Token in Main Stack: ' + token);
 
   return (
-    <NewOrderStack.Navigator>
-      <NewOrderStack.Screen
-        name={'New Order'}
-        component={NewOrderScreen}
+    <ProductQRStack.Navigator>
+      <ProductQRStack.Screen
+        name={'Scan a QR Code'}
+        component={ProductQRScanner}
         //initialParams={{token: token}}
         options={{
-          title: 'New Order',
+          title: 'Scan a QR Code',
           headerLeft: () => (
             <Feather
               style={styles.headerLeft}
               name="menu"
               size={26}
               onPress={() => navigation.openDrawer()}
-            />
-          ),
-          headerRight: () => (
-            <Feather
-              style={styles.headerRight}
-              name="map-pin"
-              size={26}
-              //onPress={() => navigation.navigate("Barcode Scanner")}
-              onPress={() => navigation.navigate("OrderScanner")}
             />
           ),
           headerStyle: {
@@ -47,7 +38,7 @@ const NewOrderStackScreen = ({route, navigation}) => {
           headerTintColor: '#ffff',
         }}
       />
-    </NewOrderStack.Navigator>
+    </ProductQRStack.Navigator>
   );
 };
 
@@ -62,4 +53,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NewOrderStackScreen;
+export default ProductQRStackScreen;
