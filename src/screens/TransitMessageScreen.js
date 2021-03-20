@@ -5,6 +5,8 @@ import {FilledButton} from '../components/FilledButton';
 
 //want to use this to prompt user to add message on where their package is in transit
 
+//need to send data to server
+//need to navigate off this screen after pressing submit button
 
 
 export function TransitMessageScreen({route, navigation}) {
@@ -16,7 +18,10 @@ export function TransitMessageScreen({route, navigation}) {
     function sub() {
       if (!submit) return;
       setSubmit(false);
+      //SEND THIS INFO AS JSON TO DATABASE TO UPDATE ORDER_NUM
       console.log(location, message, submit, order_num);
+     // navigation.navigate("CurrentOrderDetails");
+
     }
 
 
@@ -55,6 +60,9 @@ export function TransitMessageScreen({route, navigation}) {
           style={styles.loginButton}
           onPress={() => {
             setSubmit(true, sub());
+            // MAybe prompt scan another? update the default location to be the one they just chose?
+            // dont know easiest way for them to mass scan..... maybe I can have these options on the same page as the qr code scanner?
+           // navigation.navigate('CurrentOrderDetails')
           }}          
         />      
       </View>
