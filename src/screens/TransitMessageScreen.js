@@ -1,44 +1,62 @@
-import React from 'react'
-import { View, Text, Button, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image } from 'react-native';
+import React, {useState} from 'react'
+import { View, Text, TextInput, Button, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {FilledButton} from '../components/FilledButton';
 
 //want to use this to prompt user to add message on where their package is in transit
 
+
+
 export function TransitMessageScreen({route, navigation}) {
     const {order_num} = route.params;
-    console.log(order_num);
+    const [location, setLocation] = useState('order');
+    const [message, setMessage ] = useState("");
+    const [submit, setSubmit] = useState(false);
+ 
+    function sub() {
+      if (!submit) return;
+      setSubmit(false);
+      console.log(location, message, submit, order_num);
+    }
+
 
     return (
       <View style={styles.container}>
-      <Text style={styles.heading}>Add Info for QR Code</Text>
+      <Text style={styles.heading}>Add Message to Order</Text>
 
-        <View style={{ marginLeft: 80, marginRight: 80 }}>
+        <View style={styles.action}>
 
           <DropDownPicker
               items={[
-                  {label: 'Order in Transit', value: 'order'},
-                  {label: 'Product at Base', value: 'product'}
+                  {label: 'Order at MLC', value: 'mlc'},
+                  {label: 'Order in Transit', value: 'transit'},
+                  {label: 'Order Ready for Pickup', value: 'pickup'}
               ]}
-              containerStyle={{width:40, height: 40}}
+              containerStyle={{height: 40}}
               style={{backgroundColor: '#fafafa'}}
               itemStyle={{
                   justifyContent: 'flex-start'
               }}
               dropDownStyle={{backgroundColor: '#fafafa'}}
-             // onChangeItem={item => this.setState({
-             //     type: item.value,
-             // })}
+              onChangeItem={item => {
+                setLocation(item.value);
+              }}
           />
-        </View>
-
+          <TextInput
+            style={styles.input}
+            placeholder={'Add a Message for the recipient'}
+            placeholderTextColor={'#868686'}
+            onChangeText={(msg) => setMessage(msg)}
+            value={message}
+          />
+        </View>  
         <FilledButton
-          title={'Submit'}
+          title={'Click'}
           style={styles.loginButton}
-          //onPress={() => {
-
-          //}}
-        />
+          onPress={() => {
+            setSubmit(true, sub());
+          }}          
+        />      
       </View>
     );
   };
