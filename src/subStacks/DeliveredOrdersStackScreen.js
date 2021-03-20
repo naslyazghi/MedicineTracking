@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {DeliveredOrdersScreen} from '../screens/DeliveredOrdersScreen';
-import BarCodeScanner from '../screens/BarcodeScanner'
+import BarCodeScanner from '../screens/OrderQRScanner'
 import Feather from 'react-native-vector-icons/Feather';
 import {View, Text, StyleSheet, Image} from 'react-native';
 

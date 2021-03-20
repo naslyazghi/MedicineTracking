@@ -57,22 +57,32 @@ export default function App({navigation}) {
 
   const test = (data) => {
     console.log(data);
-    var parsed_data = JSON.parse(data);
-    if("type" in parsed_data) {
-      //  takes the qr code data and does things if the type is order vs if its product
-      //  qrcode_type[parsed_data.type](parsed_data, navigation);
-      //new code dont use if like old way
-      if (parsed_data.type == "order") {
-        if(location == 'none' && message == "") {
-          alert('Please Choose Location and/or Leave a Message and try again')
+    try {
+      var parsed_data = JSON.parse(data);
+      if("type" in parsed_data) {
+        //  takes the qr code data and does things if the type is order vs if its product
+        //  qrcode_type[parsed_data.type](parsed_data, navigation);
+        //new code dont use if like old way
+        if (parsed_data.type == "order") {
+          if(location == 'none' && message == "") {
+            alert('Please Choose Location and/or Leave a Message and try again')
+          }
+          else {
+            alert(`Success! Order ${parsed_data.num} has been updated with location ${location} and message ${message}!`);
+          }
+        }
+        else if (parsed_data.type == "product") {
+          alert('Wrong QR scanner, redirecting to the correct one');
         }
         else {
-          alert(`Success! Order ${parsed_data.num} has been updated with location ${location} and message ${message}!`);
+          alert('Invalid QR Code')
         }
-        console.log(message);
-        console.log("555", scanned)
-      }
+      } 
     }
+    catch {
+      alert('Invalid QR Code');
+    }
+
 
   };
 
