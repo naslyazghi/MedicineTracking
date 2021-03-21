@@ -27,20 +27,26 @@ export function DrawerContent(props) {
   const {signOut} = React.useContext(AuthContext);
 
   //Decode the token
-  // const userToken = global.userTokenConst;
-  // const decoded = jwt_decode(userToken);
-  //console.log(decoded);
-  // var user = {
-  //   id: decoded.user.id,
-  //   username: decoded.user.name,
-  //   email: decoded.user.email,
-  // };
+  const userToken = global.userTokenConst;
+  //const refreshToken = global.refreshTokenConst;
+  const decoded = jwt_decode(userToken);
+  //const decoded2 = jwt_decode(refreshToken);
+  // console.log("token contents: " + JSON.stringify(decoded));
+  // console.log("refreshToken: " + JSON.stringify(decoded2));
+
+
 
   var user = {
-    id: "123",
-    username: "Username",
-    email: "Email",
+    id: decoded.user.id,
+    username: decoded.user.name,
+    email: decoded.user.email,
   };
+
+  // var user = {
+  //   id: "123",
+  //   username: "Username",
+  //   email: "Email",
+  // };
 
 
   return (

@@ -14,6 +14,7 @@ import {LogIn, Navigation} from 'react-feather';
 
 
 global.userTokenConst = null;
+global.refreshTokenConst = null;
 const jwt_decode = require('jwt-decode');
 
 
@@ -34,6 +35,7 @@ function App() {
   const initialLoginState = {
     isLoading: true,
     userToken: null,
+    refreshToken: null,
   };
 
   // Login reducer function
@@ -44,25 +46,29 @@ function App() {
         return {
           ...prevState,
           isLoading: false,
-          userToken: action.token,
+          userToken: action.userToken,
+          refreshToken: action.refreshToken,
         };
       case 'LOGIN':
         return {
           ...prevState,
           isLoading: false,
-          userToken: action.token,
+          userToken: action.userToken,
+          refreshToken: action.refreshToken,
         };
       case 'LOGOUT':
         return {
           ...prevState,
           isLoading: false,
           userToken: null,
+          refreshToken: null,
         };
       case 'REGISTER':
         return {
           ...prevState,
           isLoading: false,
-          userToken: action.token,
+          userToken: action.userToken,
+          refreshToken: action.refreshToken,
         };
     }
   };
@@ -77,13 +83,16 @@ function App() {
     () => ({
       // Log In
       logIn: async user => {
-        const userToken = String(user.userToken);
+        const userToken = String(user.userToken.token);
+        const refreshToken = String(user.userToken.refreshToken);
+        // console.log("token ===== " + userToken);
         // Store the token in the local storage
         try 
         {
           await AsyncStorage.setItem('userToken', userToken);
+          await AsyncStorage.setItem('refreshToken', refreshToken);
           // Action
-          dispatch({type: 'LOGIN', token: userToken});
+          dispatch({type: 'LOGIN', userToken: userToken, refreshToken: refreshToken});
         } 
         catch (e) 
         {
@@ -97,6 +106,7 @@ function App() {
         try 
         {
           await AsyncStorage.removeItem('userToken');
+          await AsyncStorage.removeItem('refreshToken');
           // Action
           dispatch({type: 'LOGOUT'});
         } 
@@ -120,11 +130,13 @@ function App() {
     setTimeout(async () => {
       // setIsLoading(false);
       let userToken = null;
+      let refreshToken = null;
       try 
       {
         userToken = await AsyncStorage.getItem('userToken');
+        refreshToken = await AsyncStorage.getItem('refreshToken');
         // globalUserToken = userToken;
-        dispatch({type: 'RETRIEVE_TOKEN', token: userToken});
+        dispatch({type: 'RETRIEVE_TOKEN', userToken: userToken, refreshToken: refreshToken});
       } 
       catch (e) 
       {
@@ -146,15 +158,16 @@ function App() {
 
   // Set the userToken global variable to be used in all screens
   global.userTokenConst = loginState.userToken;
+  global.refreshTokenConst = loginState.refreshToken;
 
 
 
-/*
+
   return (
-    // Navigation container is responsible for controlling the themes, states, restoring states
+    //Navigation container is responsible for controlling the themes, states, restoring states
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
-        {/*Check if user is logged in *//*}
+        {/*Check if user is logged in */}
         
         {loginState.userToken !== null ? (
           <MainStackScreen/>
@@ -164,15 +177,15 @@ function App() {
       </NavigationContainer>
     </AuthContext.Provider>
   );
-*/
 
-   return (
-     <AuthContext.Provider value={authContext}>
-     <NavigationContainer>
-         <MainStackScreen/>
-     </NavigationContainer>
-   </AuthContext.Provider>
-   );
+
+  // return (
+  //   <AuthContext.Provider value={authContext}>
+  //   <NavigationContainer>
+  //       <MainStackScreen/>
+  //   </NavigationContainer>
+  // </AuthContext.Provider>
+  // );
 }
 
 export default App;

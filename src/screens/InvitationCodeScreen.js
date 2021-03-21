@@ -92,7 +92,7 @@ export function InvitationCodeScreen({navigation}) {
                         message: res.message,
                     });
                     // Show an alert box
-                    Alert.alert('Error', res.message, [
+                    Alert.alert('Error', message, [
                         {text: 'OK'},
                     ]);
                 }
@@ -105,7 +105,7 @@ export function InvitationCodeScreen({navigation}) {
                         message: res.message,
                     });
                     // Show an alert box
-                    Alert.alert('Success!', res.message, [
+                    Alert.alert('Success!', message, [
                         {text: 'OK'},
                     ]);
                     navigation.goBack();

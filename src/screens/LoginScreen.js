@@ -125,10 +125,9 @@ const LoginScreen = ({navigation}) => {
                 },
                 body: js,
             });
-            console.log(response);
+            console.log("Login => Response = " + JSON.stringify(response));
             // 2 - Parsing the response
             var res = JSON.parse(await response.text());
-            var token = res.Content;
 
             // 3 - Processing the response
             // User not found
@@ -148,14 +147,15 @@ const LoginScreen = ({navigation}) => {
             // User found
             else {
                 console.log("response succeeded");
-                console.log(token);
+                var tokenResponse = res.Content;
+                console.log("tokenResponse = " , tokenResponse);
                 // Decode the token
                 try{
-                    var decoded = jwt_decode(token);
+                    var decoded = jwt_decode(tokenResponse.token);
                     console.log("decoded = " + JSON.stringify(decoded));
                 }
                 catch(e){
-                    console.log(e.message);
+                    console.log("Exception message = " + e.message);
                 }
                 //localStorage.setItem('user_data', JSON.stringify(user));
 
@@ -169,8 +169,7 @@ const LoginScreen = ({navigation}) => {
                 var user = {
                     id: decoded.user._id,
                     name: decoded.user.name,
-                    email: decoded.user.email,
-                    userToken: token,
+                    userToken: tokenResponse,
                 };
                 
                 // Show an alert box

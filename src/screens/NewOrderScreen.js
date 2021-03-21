@@ -1,26 +1,85 @@
 import React, {useState} from 'react';
-import { ScrollView, View, TextInput, Text, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image } from 'react-native';
+import { ScrollView, View, TextInput, Text, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image, Alert} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {FilledButton} from '../components/FilledButton';
 import {TextButton} from '../components/TextButton';
 import { color } from 'react-native-reanimated';
 import Feather from 'react-native-vector-icons/Feather';
-
+import jwt_decode from "jwt-decode";
+import token from "../helperFunctions/token";
+const BASE_URL = 'http://10.0.0.5:8080/';
 
 const NewOrderScreen = ({navigation}) => {
-  const [selectedPath, setSelectedPath] = useState('');
+  // const refreshToken = global.refreshTokenConst;
+  const action = "create";
+  const resource = "order";
   var pathList = [];
-  pathList = [
-    "Path1", 
-    "Path2", 
-    "Path3",
-    "Path4", 
-    "Path5", 
-    "Path6",
-    "Path7", 
-    "Path8", 
-    "Path9",
-  ];
+  
+  const userToken = new token().getToken();
+  console.log("token = " + JSON.stringify(userToken));
+
+  const getCompletePathList = async () => {
+    const js = '{"action":"' + action + '","resource":"' + resource + '"}';
+    const response = await fetch(BASE_URL + 'api/inventory/complete_paths', {
+      method: 'POST',
+      headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userToken}`,
+      },
+      body: js,
+    });
+    console.log(response);
+    // 2 - Parsing the response
+    var res = JSON.parse(await response.text());
+    if (!res.response) 
+    {
+      Alert.alert('Error', res.message, [
+        {text: 'OK'},
+      ]);
+      return;
+    }
+    else 
+    {
+      pathList = res.Content;
+    }
+  }
+
+  getCompletePathList();
+
+
+  //Decode the token
+  // const userToken = global.userTokenConst;
+  // const decoded = jwt_decode(userToken);
+  // console.log("decoded = " + decoded);
+  // var user = {
+  //   id: decoded.user.id,
+  //   username: decoded.user.name,
+  //   email: decoded.user.email,
+  // };
+
+
+
+
+
+
+
+
+
+
+
+  const [selectedPath, setSelectedPath] = useState('');
+  // pathList = [
+  //   "Path1", 
+  //   "Path2", 
+  //   "Path3",
+  //   "Path4", 
+  //   "Path5", 
+  //   "Path6",
+  //   "Path7", 
+  //   "Path8", 
+  //   "Path9",
+  // ];
 
   let paths;
 
@@ -164,7 +223,7 @@ const NewOrderScreen = ({navigation}) => {
             // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
           />
         </View>
-        <View style={styles.action}>
+        {/* <View style={styles.action}>
           <TextInput
             style={styles.textInput}
             placeholder={'Tracking Number'}
@@ -172,8 +231,8 @@ const NewOrderScreen = ({navigation}) => {
             // onChangeText={val => invitationCodeInputChange(val)}
             // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
           />
-        </View>
-        <View style={styles.action}>
+        </View> */}
+        {/* <View style={styles.action}>
           <TextInput
             style={styles.textInput}
             placeholder={'Order Date'}
@@ -182,7 +241,7 @@ const NewOrderScreen = ({navigation}) => {
             // onChangeText={val => invitationCodeInputChange(val)}
             // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
           />
-        </View>
+        </View> */}
       
         <Text style={styles.heading}>Select order path*</Text>
       
@@ -229,7 +288,7 @@ const NewOrderScreen = ({navigation}) => {
 };
 
 
-  export default NewOrderScreen;
+export default NewOrderScreen;
 
 
 const styles = StyleSheet.create({
