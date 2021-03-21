@@ -21,6 +21,7 @@ class NewOrderScreen extends Component {
     isDesiredOrderSectionVisible: false,
     headingIcon: "plus-square",
     paths: [],
+    orderNumber: "",
   };
 
   async componentDidMount () {
@@ -94,6 +95,13 @@ class NewOrderScreen extends Component {
     }
   }
 
+
+  orderNumberTextInputChange (val) {
+    this.setState({orderNumber: val});
+    console.log("orderNumber = " + this.state.orderNumber);
+  };
+
+
   showDesiredOrderSection() {
     setIsDesiredOrderSectionVisible(!this.state.isDesiredOrderSectionVisible)
     if (this.state.headingIcon == "plus-square")
@@ -105,6 +113,43 @@ class NewOrderScreen extends Component {
       this.setState({headingIcon : "plus-square"});
     }
   };
+
+
+  async placeOrder(orderNumber, selectedPath) {
+    const response = await fetch(BASE_URL + 'api/order', {
+      method: 'POST',
+      headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.state.token}`,
+      },
+      body: JSON.stringify({
+        orderNumber: orderNumber,
+        path: selectedPath,
+        items: [
+        ]
+      }),
+    });
+    // console.log(response);
+    // 2 - Parsing the response
+    var res = JSON.parse(await response.text());
+    if (!res.response) 
+    {
+      Alert.alert('Error', res.message, [
+        {text: 'OK'},
+      ]);
+      return null;
+    }
+    else 
+    {
+      Alert.alert('Success', res.message, [
+        {text: 'OK'},
+      ]);
+      return res.Content;
+    }
+  }
+
+
 
   orderExample = [
     { 
@@ -219,8 +264,7 @@ class NewOrderScreen extends Component {
               style={styles.textInput}
               placeholder={'Order Number'}
               placeholderTextColor={'#868686'}
-              // onChangeText={val => invitationCodeInputChange(val)}
-              // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
+              onChangeText={val => this.orderNumberTextInputChange(val)}
             />
           </View>
           {/* <View style={styles.action}>
@@ -280,15 +324,15 @@ class NewOrderScreen extends Component {
           <FilledButton
             title={'Submit'}
             style={styles.submitButton}
-            onPress={() => {}}
+            onPress={() => {
+              this.placeOrder(this.state.orderNumber, this.state.selectedPath);
+            }}
           />
         </View>
       </ScrollView>
     );
   };
 }
-
-
 
 
 
@@ -378,5 +422,4 @@ const styles = StyleSheet.create({
 
 AppRegistry.registerComponent('NewOrderScreen', () => NewOrderScreen);
 module.exports = NewOrderScreen;
-// export default NewOrderScreen;
 
