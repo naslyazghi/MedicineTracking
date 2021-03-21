@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { ScrollView, View, TextInput, Text, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image, Alert} from 'react-native';
+import React, { Component } from 'react';
+import { AppRegistry, ScrollView, View, TextInput, Text, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image, Alert} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {FilledButton} from '../components/FilledButton';
 import {TextButton} from '../components/TextButton';
@@ -7,19 +7,96 @@ import { color } from 'react-native-reanimated';
 import Feather from 'react-native-vector-icons/Feather';
 import jwt_decode from "jwt-decode";
 import functions from "../helperFunctions/helpers";
-// const BASE_URL = 'http://10.0.0.5:8080/';
-const BASE_URL = 'http://localhost:8080/';
+import AsyncStorage from '@react-native-community/async-storage'
+const BASE_URL = 'http://10.0.0.5:8080/';
+//const BASE_URL = 'http://localhost:8080/';
 
-const NewOrderScreen = ({navigation}) => {
-  const action = "create";
-  const resource = "order";
-  const refreshToken = global.refreshTokenConst;
-  var token = global.userTokenConst;
-  var pathList = [];
-  // console.log("token = " + JSON.stringify(userToken));
+class NewOrderScreen extends Component {
+  action = "create";
+  resource = "order";
+  refreshToken = global.refreshTokenConst;
+  state = {
+    token: global.userTokenConst,
+    pathList: [], 
+    selectedPath: '',
+    isDesiredOrderSectionVisible: false,
+    headingIcon: "plus-square",
+    paths: [],
+  };
+
+  // const [isDesiredOrderSectionVisible, setIsDesiredOrderSectionVisible] = React.useState(false);
+  // const [headingIcon, setHeadingIcon] = React.useState("plus-square");
   
-  // Check Token
-  const getToken = async () => {
+
+
+  async componentDidMount () {
+    this.setState({pathList: await this.getCompletePathList()}) 
+    // pathList = await this.getCompletePathList();
+    console.log("PathList = " + JSON.stringify(this.state.pathList));
+    // const [selectedPath, setSelectedPath] = useState('');
+    // pathList = [
+    //   "Path1", 
+    //   "Path2", 
+    //   "Path3",
+    //   "Path4", 
+    //   "Path5", 
+    //   "Path6",
+    //   "Path7", 
+    //   "Path8", 
+    //   "Path9",
+    // ];
+
+    // Process the path list
+    
+    if (this.state.pathList !== null)
+    {
+
+      var val = this.state.pathList.map((value, index) => {
+        console.log('value: ' + value + " / index: " + index);
+        return <Picker.Item label={value} value={value} key={index} />;
+      });
+      this.setState({paths: val});
+      console.log('selected path: ' + this.state.selectedPath);
+    }
+  }
+
+  // Get the full list of Paths
+  async getCompletePathList () {
+    console.log("Get complete path list function called ...");
+    this.setState({token: this.getToken()});
+    // token = this.getToken();
+    const response = await fetch(BASE_URL + 'api/inventory/complete_paths', {
+      method: 'POST',
+      headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.state.token}`,
+      },
+      body: JSON.stringify({
+        action: this.action,
+        resource: this.resource,
+      }),
+    });
+    console.log(response);
+    // 2 - Parsing the response
+    var res = JSON.parse(await response.text());
+    if (!res.response) 
+    {
+      Alert.alert('Error', res.message, [
+        {text: 'OK'},
+      ]);
+      return null;
+    }
+    else 
+    {
+      return res.Content;
+    }
+  }
+
+
+  
+  // Check for the token if expired
+  async getToken () {
     console.log("Get token function called ...");
     // var isTokenExpired = new Token().checkTokenIfExpired();
     var isTokenExpired = functions.checkTokenIfExpired();
@@ -34,7 +111,7 @@ const NewOrderScreen = ({navigation}) => {
               'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-              refreshToken: refreshToken,
+              refreshToken: this.refreshToken,
           }),
       });
 
@@ -66,38 +143,6 @@ const NewOrderScreen = ({navigation}) => {
     }
   }
 
-  
-  const getCompletePathList = async () => {
-    console.log("Get complete path list function called ...");
-    token = getToken();
-    const js = '{"action":"' + action + '","resource":"' + resource + '"}';
-    const response = await fetch(BASE_URL + 'api/inventory/complete_paths', {
-      method: 'POST',
-      headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-      },
-      body: js,
-    });
-    console.log(response);
-    // 2 - Parsing the response
-    var res = JSON.parse(await response.text());
-    if (!res.response) 
-    {
-      Alert.alert('Error', res.message, [
-        {text: 'OK'},
-      ]);
-      return null;
-    }
-    else 
-    {
-      return res.Content;
-    }
-  }
-
-  
-
 
   //Decode the token
   // const userToken = global.userTokenConst;
@@ -111,49 +156,20 @@ const NewOrderScreen = ({navigation}) => {
 
 
 
-  pathList = getCompletePathList();
-  console.log("PathList = " + JSON.stringify(pathList));
 
-  const [selectedPath, setSelectedPath] = useState('');
-  
-  pathList = [
-    "Path1", 
-    "Path2", 
-    "Path3",
-    "Path4", 
-    "Path5", 
-    "Path6",
-    "Path7", 
-    "Path8", 
-    "Path9",
-  ];
-
-  // Process the path list
-  let paths;
-  if (pathList !== null)
-  {
-    paths = pathList.map((value, index) => {
-      console.log('value: ' + value + " / index: " + index);
-      return <Picker.Item label={value} value={value} key={index} />;
-    });
-    console.log('selected path: ' + selectedPath);
-  }
-
-  const [isDesiredOrderSectionVisible, setIsDesiredOrderSectionVisible] = React.useState(false);
-  const [headingIcon, setHeadingIcon] = React.useState("plus-square");
-  const showDesiredOrderSection = () => {
-    setIsDesiredOrderSectionVisible(!isDesiredOrderSectionVisible)
-    if (headingIcon == "plus-square")
+  showDesiredOrderSection() {
+    setIsDesiredOrderSectionVisible(!this.state.isDesiredOrderSectionVisible)
+    if (this.state.headingIcon == "plus-square")
     {
-      setHeadingIcon("minus-square");
+      this.setState({headingIcon : "minus-square"});
     }
     else
     {
-      setHeadingIcon("plus-square")
+      this.setState({headingIcon : "plus-square"});
     }
   };
 
-  const orderExample = [
+  orderExample = [
     { 
       id: '9125334514',
       path: '/home/inv1/inv12',
@@ -253,89 +269,90 @@ const NewOrderScreen = ({navigation}) => {
         },
       ],
     }
-  ]
+  ];
 
 
+  render() {
+    return (
+      <ScrollView>
+        <View style={styles.container}>
+        <Text style={styles.heading}>Add order info*</Text>
+          <View style={styles.action}>
+            <TextInput
+              style={styles.textInput}
+              placeholder={'Order Number'}
+              placeholderTextColor={'#868686'}
+              // onChangeText={val => invitationCodeInputChange(val)}
+              // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
+            />
+          </View>
+          {/* <View style={styles.action}>
+            <TextInput
+              style={styles.textInput}
+              placeholder={'Tracking Number'}
+              placeholderTextColor={'#868686'}
+              // onChangeText={val => invitationCodeInputChange(val)}
+              // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
+            />
+          </View> */}
+          {/* <View style={styles.action}>
+            <TextInput
+              style={styles.textInput}
+              placeholder={'Order Date'}
+              type={"date"}
+              placeholderTextColor={'#868686'}
+              // onChangeText={val => invitationCodeInputChange(val)}
+              // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
+            />
+          </View> */}
+        
+          <Text style={styles.heading}>Select order path*</Text>
+        
+          <View style={styles.picker}>
+            <Picker
+              selectedValue={this.state.selectedPath}
+              style={{height: 40, width: 300,}}
+              onValueChange={value => this.setState({selectedPath: value})}>
+              {this.state.paths}
+            </Picker>
+          </View>
 
-  return (
-    <ScrollView>
-      <View style={styles.container}>
-      <Text style={styles.heading}>Add order info*</Text>
-        <View style={styles.action}>
-          <TextInput
-            style={styles.textInput}
-            placeholder={'Order Number'}
-            placeholderTextColor={'#868686'}
-            // onChangeText={val => invitationCodeInputChange(val)}
-            // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
+          <TouchableOpacity style={styles.desiredOrder} onPress={() => {
+              this.showDesiredOrderSection();
+            }}>
+            <Feather name={this.state.headingIcon} style={styles.iconButton} />
+            <Text style={{fontSize:18, color:'white'}}>Add desired order</Text>
+          </TouchableOpacity>
+
+          <View style={{width:'100%'}}>
+            {
+              this.state.isDesiredOrderSectionVisible == true ? 
+                <View>
+                  <Text style={styles.productHeading}>Product 1</Text>
+                  <Text style={{marginLeft:18}}>Product 1 Details</Text>
+                  <Text style={styles.productHeading}>Product 2</Text>
+                  <Text style={{marginLeft:18}}>Product 2 Details</Text>
+                  <Text style={styles.productHeading}>Product 3</Text>
+                  <Text style={{marginLeft:18}}>Product 3 Details</Text>
+                </View> 
+                :
+                null
+            }
+          </View>
+
+          <FilledButton
+            title={'Submit'}
+            style={styles.submitButton}
+            onPress={() => {}}
           />
         </View>
-        {/* <View style={styles.action}>
-          <TextInput
-            style={styles.textInput}
-            placeholder={'Tracking Number'}
-            placeholderTextColor={'#868686'}
-            // onChangeText={val => invitationCodeInputChange(val)}
-            // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
-          />
-        </View> */}
-        {/* <View style={styles.action}>
-          <TextInput
-            style={styles.textInput}
-            placeholder={'Order Date'}
-            type={"date"}
-            placeholderTextColor={'#868686'}
-            // onChangeText={val => invitationCodeInputChange(val)}
-            // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
-          />
-        </View> */}
-      
-        <Text style={styles.heading}>Select order path*</Text>
-      
-        <View style={styles.picker}>
-          <Picker
-            selectedValue={selectedPath}
-            style={{height: 40, width: 300,}}
-            onValueChange={value => setSelectedPath(value)}>
-            {paths}
-          </Picker>
-        </View>
-
-        <TouchableOpacity style={styles.desiredOrder} onPress={() => {
-            showDesiredOrderSection();
-          }}>
-          <Feather name={headingIcon} style={styles.iconButton} />
-          <Text style={{fontSize:18, color:'white'}}>Add desired order</Text>
-        </TouchableOpacity>
-
-        <View style={{width:'100%'}}>
-          {
-            isDesiredOrderSectionVisible == true ? 
-              <View>
-                <Text style={styles.productHeading}>Product 1</Text>
-                <Text style={{marginLeft:18}}>Product 1 Details</Text>
-                <Text style={styles.productHeading}>Product 2</Text>
-                <Text style={{marginLeft:18}}>Product 2 Details</Text>
-                <Text style={styles.productHeading}>Product 3</Text>
-                <Text style={{marginLeft:18}}>Product 3 Details</Text>
-              </View> 
-              :
-              null
-          }
-        </View>
-
-        <FilledButton
-          title={'Submit'}
-          style={styles.submitButton}
-          onPress={() => {}}
-        />
-      </View>
-    </ScrollView>
-  );
-};
+      </ScrollView>
+    );
+  };
+}
 
 
-export default NewOrderScreen;
+
 
 
 const styles = StyleSheet.create({
@@ -419,4 +436,10 @@ const styles = StyleSheet.create({
   submitButton: {
     marginTop: 25,
 },
-})
+});
+
+
+AppRegistry.registerComponent('NewOrderScreen', () => NewOrderScreen);
+module.exports = NewOrderScreen;
+// export default NewOrderScreen;
+

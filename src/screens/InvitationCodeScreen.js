@@ -36,87 +36,86 @@ export function InvitationCodeScreen({navigation}) {
     };
 
 
-        // Handle user if valid
-        const handleValidUser = val => {
-            if (val.trim().length >= 8) {
-                setData({
-                    ...data,
-                    isValidEmail: true,
-                });
-            } else {
-                setData({
-                    ...data,
-                    isValidEmail: false,
-                });
-            }
-        };
+    // Handle user if valid
+    const handleValidUser = val => {
+        if (val.trim().length >= 8) {
+            setData({
+                ...data,
+                isValidEmail: true,
+            });
+        } else {
+            setData({
+                ...data,
+                isValidEmail: false,
+            });
+        }
+    };
     
     
-        // 3 - Hundle sending invitation code
-        const sendInvitation = async (email) => {
-            // Construct the Json body for the request
-            const js = '{"email":"' + email + '"}';
-            console.log(js);
-    
-            // Check if email is empty
-            if (email.length == 0) {
-                Alert.alert('Wrong Input!', 'Email cannot be empty.', [
+    // 3 - Handle sending invitation code
+    const sendInvitation = async (email) => {
+        // Construct the Json body for the request
+        const js = '{"email":"' + email + '"}';
+        console.log("js = " + js);
+
+        // Check if email is empty
+        if (email.length == 0) {
+            Alert.alert('Wrong Input!', 'Email cannot be empty.', [
                 {text: 'OK'},
-                ]);
-                return;
-            }
-    
-            try {
-                // 1 - Make API call
-                const response = await fetch(BASE_URL + 'api/admin/admin_invite', {
-                    method: 'POST',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: js,
+            ]);
+            return;
+        }
+
+        try {
+            // 1 - Make API call
+            const response = await fetch(BASE_URL + 'api/admin/admin_invite', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: js,
+            });
+
+            // 2 - Parse the response
+            var res = JSON.parse(await response.text());
+            console.log("res = " + res);
+
+            // 3 - Processing the response
+            // Sending invitation failed
+            if (!res.response) {
+                console.log("response failed");
+                // Set the message
+                setData({
+                    ...data,
+                    message: res.message,
                 });
-    
-                console.log(response);
-                // 2 - Parse the response
-                var res = JSON.parse(await response.text());
-                console.log(res);
-    
-                // 3 - Processing the response
-                // Sending invitation failed
-                if (res.response != true) {
-                    console.log("response failed");
-                    // Set the message
-                    setData({
-                        ...data,
-                        message: res.message,
-                    });
-                    // Show an alert box
-                    Alert.alert('Error', message, [
-                        {text: 'OK'},
-                    ]);
-                }
-                // Sending invitation succeeded
-                else {
-                    console.log("response succeeded");
-                    // Set the message
-                    setData({
-                        ...data,
-                        message: res.message,
-                    });
-                    // Show an alert box
-                    Alert.alert('Success!', message, [
-                        {text: 'OK'},
-                    ]);
-                    navigation.goBack();
-                }
-            } 
-            catch (e) {
-                console.log(e.message);
-                Alert.alert('Error', e.toString(), [{text: 'OK'}]);
-                return;
+                // Show an alert box
+                Alert.alert('Error', res.message, [
+                    {text: 'OK'},
+                ]);
             }
-        };
+            // Sending invitation succeeded
+            else {
+                console.log("response succeeded");
+                // Set the message
+                setData({
+                    ...data,
+                    message: res.message,
+                });
+                // Show an alert box
+                Alert.alert('Success!', res.message, [
+                    {text: 'OK'},
+                ]);
+                navigation.goBack();
+            }
+        } 
+        catch (e) {
+            console.log("exception = " + e.message);
+            Alert.alert('Error', e.toString(), [{text: 'OK'}]);
+            return;
+        }
+    };
 
 
     return (
