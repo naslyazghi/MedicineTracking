@@ -31,9 +31,9 @@ const NewInventoryStackScreen = ({route, navigation}) => {
                 headerRight: () => (
                     <Feather
                         style={styles.headerRight}
-                        name="map-pin"
+                        name="shopping-cart"
                         size={26}
-                        onPress={() => navigation.navigate("Barcode Scanner")}
+                        onPress={() => navigation.navigate("ProductScanner")}
                     />
                 ),
                 headerStyle: {

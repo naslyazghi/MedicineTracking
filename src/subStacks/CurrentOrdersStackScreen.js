@@ -33,7 +33,8 @@ return (
             style={styles.headerRight}
             name="map-pin"
             size={26}
-            onPress={() => navigation.navigate("Barcode Scanner")}
+            //onPress={() => navigation.navigate("Barcode Scanner")}
+            onPress={() => navigation.navigate("OrderScanner")}
             />
         ),
         headerStyle: {
