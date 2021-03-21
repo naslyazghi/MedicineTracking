@@ -9,7 +9,6 @@ import jwt_decode from "jwt-decode";
 import functions from "../helperFunctions/helpers";
 import AsyncStorage from '@react-native-community/async-storage'
 const BASE_URL = 'http://10.0.0.5:8080/';
-//const BASE_URL = 'http://localhost:8080/';
 
 class NewOrderScreen extends Component {
   action = "create";
@@ -24,47 +23,29 @@ class NewOrderScreen extends Component {
     paths: [],
   };
 
-  // const [isDesiredOrderSectionVisible, setIsDesiredOrderSectionVisible] = React.useState(false);
-  // const [headingIcon, setHeadingIcon] = React.useState("plus-square");
-  
-
-
   async componentDidMount () {
-    this.setState({pathList: await this.getCompletePathList()}) 
-    // pathList = await this.getCompletePathList();
-    console.log("PathList = " + JSON.stringify(this.state.pathList));
-    // const [selectedPath, setSelectedPath] = useState('');
-    // pathList = [
-    //   "Path1", 
-    //   "Path2", 
-    //   "Path3",
-    //   "Path4", 
-    //   "Path5", 
-    //   "Path6",
-    //   "Path7", 
-    //   "Path8", 
-    //   "Path9",
-    // ];
+    this.setState({token: await this.getToken()})
+    this.setState({pathList: await this.getPathList()}) 
+    this.processPathList();
+  }
 
-    // Process the path list
-    
+
+  //Get the full list of Paths
+  async processPathList () {
+    // console.log("Get complete path list function called ...");
     if (this.state.pathList !== null)
     {
-
       var val = this.state.pathList.map((value, index) => {
-        console.log('value: ' + value + " / index: " + index);
+        // console.log('value: ' + value + " / index: " + index);
         return <Picker.Item label={value} value={value} key={index} />;
       });
       this.setState({paths: val});
-      console.log('selected path: ' + this.state.selectedPath);
+      // console.log('selected path: ' + this.state.selectedPath);
     }
   }
 
-  // Get the full list of Paths
-  async getCompletePathList () {
-    console.log("Get complete path list function called ...");
-    this.setState({token: this.getToken()});
-    // token = this.getToken();
+
+  async getPathList () {
     const response = await fetch(BASE_URL + 'api/inventory/complete_paths', {
       method: 'POST',
       headers: {
@@ -77,7 +58,7 @@ class NewOrderScreen extends Component {
         resource: this.resource,
       }),
     });
-    console.log(response);
+    // console.log(response);
     // 2 - Parsing the response
     var res = JSON.parse(await response.text());
     if (!res.response) 
@@ -94,68 +75,24 @@ class NewOrderScreen extends Component {
   }
 
 
-  
   // Check for the token if expired
   async getToken () {
-    console.log("Get token function called ...");
-    // var isTokenExpired = new Token().checkTokenIfExpired();
+    // console.log("Get token function called ...");
     var isTokenExpired = functions.checkTokenIfExpired();
-    console.log("isTokenExpired = " + JSON.stringify(isTokenExpired));
+    // console.log("isTokenExpired = " + JSON.stringify(isTokenExpired));
     if(isTokenExpired)
     {
-      console.log("Token is expired")
-      const response = await fetch(BASE_URL + 'api/user/token', {
-          method: 'POST',
-          headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-              refreshToken: this.refreshToken,
-          }),
-      });
-
-      console.log("token response = " + JSON.stringify(response));
-      // 2 - Parsing the response
-      var res = JSON.parse(await response.text());
-      if (!res.response) 
-      {
-        console.log("response failed");
-          Alert.alert('Error', res.message, [
-              {text: 'OK'},
-          ]);
-          return null;
-      }
-      else 
-      {
-        console.log("Token refreshed")
-          global.userTokenConst = res.Content;
-          // Update Local storage
-          await AsyncStorage.mergeItem('userToken', res.Content);
-          console.log("Token = " + JSON.stringify(res.Content));
-          return res.Content;
-      }
+      // console.log("Token is expired")
+      var newToken = functions.refreshToken();
+      this.setState({token: newToken});
+      return newToken;
     }
     else
     {
-      console.log("Token is not expired")
+      // console.log("Token is not expired")
       return global.userTokenConst;;
     }
   }
-
-
-  //Decode the token
-  // const userToken = global.userTokenConst;
-  // const decoded = jwt_decode(userToken);
-  // console.log("decoded = " + decoded);
-  // var user = {
-  //   id: decoded.user.id,
-  //   username: decoded.user.name,
-  //   email: decoded.user.email,
-  // };
-
-
-
 
   showDesiredOrderSection() {
     setIsDesiredOrderSectionVisible(!this.state.isDesiredOrderSectionVisible)
