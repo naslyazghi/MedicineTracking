@@ -6,26 +6,77 @@ import {TextButton} from '../components/TextButton';
 import { color } from 'react-native-reanimated';
 import Feather from 'react-native-vector-icons/Feather';
 import jwt_decode from "jwt-decode";
-import token from "../helperFunctions/token";
-const BASE_URL = 'http://10.0.0.5:8080/';
+import functions from "../helperFunctions/helpers";
+// const BASE_URL = 'http://10.0.0.5:8080/';
+const BASE_URL = 'http://localhost:8080/';
 
 const NewOrderScreen = ({navigation}) => {
-  // const refreshToken = global.refreshTokenConst;
   const action = "create";
   const resource = "order";
+  const refreshToken = global.refreshTokenConst;
+  var token = global.userTokenConst;
   var pathList = [];
+  // console.log("token = " + JSON.stringify(userToken));
   
-  const userToken = new token().getToken();
-  console.log("token = " + JSON.stringify(userToken));
+  // Check Token
+  const getToken = async () => {
+    console.log("Get token function called ...");
+    // var isTokenExpired = new Token().checkTokenIfExpired();
+    var isTokenExpired = functions.checkTokenIfExpired();
+    console.log("isTokenExpired = " + JSON.stringify(isTokenExpired));
+    if(isTokenExpired)
+    {
+      console.log("Token is expired")
+      const response = await fetch(BASE_URL + 'api/user/token', {
+          method: 'POST',
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              refreshToken: refreshToken,
+          }),
+      });
 
+      console.log("token response = " + JSON.stringify(response));
+      // 2 - Parsing the response
+      var res = JSON.parse(await response.text());
+      if (!res.response) 
+      {
+        console.log("response failed");
+          Alert.alert('Error', res.message, [
+              {text: 'OK'},
+          ]);
+          return null;
+      }
+      else 
+      {
+        console.log("Token refreshed")
+          global.userTokenConst = res.Content;
+          // Update Local storage
+          await AsyncStorage.mergeItem('userToken', res.Content);
+          console.log("Token = " + JSON.stringify(res.Content));
+          return res.Content;
+      }
+    }
+    else
+    {
+      console.log("Token is not expired")
+      return global.userTokenConst;;
+    }
+  }
+
+  
   const getCompletePathList = async () => {
+    console.log("Get complete path list function called ...");
+    token = getToken();
     const js = '{"action":"' + action + '","resource":"' + resource + '"}';
     const response = await fetch(BASE_URL + 'api/inventory/complete_paths', {
       method: 'POST',
       headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userToken}`,
+          'Authorization': `Bearer ${token}`,
       },
       body: js,
     });
@@ -37,15 +88,15 @@ const NewOrderScreen = ({navigation}) => {
       Alert.alert('Error', res.message, [
         {text: 'OK'},
       ]);
-      return;
+      return null;
     }
     else 
     {
-      pathList = res.Content;
+      return res.Content;
     }
   }
 
-  getCompletePathList();
+  
 
 
   //Decode the token
@@ -60,29 +111,25 @@ const NewOrderScreen = ({navigation}) => {
 
 
 
-
-
-
-
-
-
-
+  pathList = getCompletePathList();
+  console.log("PathList = " + JSON.stringify(pathList));
 
   const [selectedPath, setSelectedPath] = useState('');
-  // pathList = [
-  //   "Path1", 
-  //   "Path2", 
-  //   "Path3",
-  //   "Path4", 
-  //   "Path5", 
-  //   "Path6",
-  //   "Path7", 
-  //   "Path8", 
-  //   "Path9",
-  // ];
+  
+  pathList = [
+    "Path1", 
+    "Path2", 
+    "Path3",
+    "Path4", 
+    "Path5", 
+    "Path6",
+    "Path7", 
+    "Path8", 
+    "Path9",
+  ];
 
+  // Process the path list
   let paths;
-
   if (pathList !== null)
   {
     paths = pathList.map((value, index) => {
