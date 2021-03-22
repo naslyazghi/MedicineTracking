@@ -1,11 +1,12 @@
 import jwt_decode from "jwt-decode";
 import AsyncStorage from '@react-native-community/async-storage';
 import {Alert,} from 'react-native';
-const BASE_URL = 'http://10.0.0.5:8080/';
+import {BASE_URL} from '../config'
+// const BASE_URL = 'http://10.0.0.5:8080/';
 
 const helpers = {
     
-    checkTokenIfExpired: function() {
+    getToken: async function() {
         var userToken = global.userTokenConst;
         var decoded = jwt_decode(userToken);
         // console.log("decoded = " + JSON.stringify(decoded));
@@ -15,12 +16,15 @@ const helpers = {
         if (Date.now() < exp)
         {
             // console.log("Not Expired");
-            return false;
+            // return false;
+            return global.userTokenConst;
         }
         else
         {
             // console.log("Expired");
-            return true
+            // return true
+            var newToken = this.refreshToken();
+            return newToken;
         }
     },
     

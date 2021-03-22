@@ -97,7 +97,6 @@ export default function App({navigation}) {
     <View style={styles.container}>
       <Text style={styles.heading}>Add Message to Order</Text>
       <View style={styles.action}>
-
         <DropDownPicker
             items={[
                 {label: 'Order at MLC', value: 'mlc'},
@@ -164,7 +163,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 18,
     marginTop: 30,
-    marginBottom: 5,
+    marginBottom: 15,
     backgroundColor: '#74848f',
     width: '100%',
     paddingHorizontal: 10,

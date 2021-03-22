@@ -25,7 +25,7 @@ class NewOrderScreen extends Component {
   };
 
   async componentDidMount () {
-    this.setState({token: await this.getToken()})
+    this.setState({token: await functions.getToken()})
     this.setState({pathList: await this.getPathList()}) 
     this.processPathList();
   }
@@ -77,23 +77,23 @@ class NewOrderScreen extends Component {
 
 
   // Check for the token if expired
-  async getToken () {
-    // console.log("Get token function called ...");
-    var isTokenExpired = functions.checkTokenIfExpired();
-    // console.log("isTokenExpired = " + JSON.stringify(isTokenExpired));
-    if(isTokenExpired)
-    {
-      // console.log("Token is expired")
-      var newToken = functions.refreshToken();
-      this.setState({token: newToken});
-      return newToken;
-    }
-    else
-    {
-      // console.log("Token is not expired")
-      return global.userTokenConst;;
-    }
-  }
+  // async getToken () {
+  //   // console.log("Get token function called ...");
+  //   var isTokenExpired = functions.checkTokenIfExpired();
+  //   // console.log("isTokenExpired = " + JSON.stringify(isTokenExpired));
+  //   if(isTokenExpired)
+  //   {
+  //     // console.log("Token is expired")
+  //     var newToken = functions.refreshToken();
+  //     this.setState({token: newToken});
+  //     return newToken;
+  //   }
+  //   else
+  //   {
+  //     // console.log("Token is not expired")
+  //     return global.userTokenConst;
+  //   }
+  // }
 
 
   orderNumberTextInputChange (val) {
