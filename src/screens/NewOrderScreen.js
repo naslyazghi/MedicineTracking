@@ -8,7 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import jwt_decode from "jwt-decode";
 import functions from "../helperFunctions/helpers";
 import AsyncStorage from '@react-native-community/async-storage'
-const BASE_URL = 'http://10.0.0.5:8080/';
+import {BASE_URL} from '../config';
 
 class NewOrderScreen extends Component {
   action = "create";
@@ -50,20 +50,21 @@ class NewOrderScreen extends Component {
     const response = await fetch(BASE_URL + 'api/inventory/complete_paths', {
       method: 'POST',
       headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.state.token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.state.token}`,
       },
       body: JSON.stringify({
         action: this.action,
         resource: this.resource,
       }),
     });
-    // console.log(response);
+    console.log("Path response = " + JSON.stringify(response));
     // 2 - Parsing the response
     var res = JSON.parse(await response.text());
     if (!res.response) 
     {
+      console.log("Path response message = " + JSON.stringify(res.response));
       Alert.alert('Error', res.message, [
         {text: 'OK'},
       ]);
@@ -71,29 +72,11 @@ class NewOrderScreen extends Component {
     }
     else 
     {
+      console.log("Path response message = " + JSON.stringify(res.response));
+      console.log("Path response content = " + JSON.stringify(res.Content));
       return res.Content;
     }
   }
-
-
-  // Check for the token if expired
-  // async getToken () {
-  //   // console.log("Get token function called ...");
-  //   var isTokenExpired = functions.checkTokenIfExpired();
-  //   // console.log("isTokenExpired = " + JSON.stringify(isTokenExpired));
-  //   if(isTokenExpired)
-  //   {
-  //     // console.log("Token is expired")
-  //     var newToken = functions.refreshToken();
-  //     this.setState({token: newToken});
-  //     return newToken;
-  //   }
-  //   else
-  //   {
-  //     // console.log("Token is not expired")
-  //     return global.userTokenConst;
-  //   }
-  // }
 
 
   orderNumberTextInputChange (val) {
@@ -103,7 +86,8 @@ class NewOrderScreen extends Component {
 
 
   showDesiredOrderSection() {
-    setIsDesiredOrderSectionVisible(!this.state.isDesiredOrderSectionVisible)
+    this.setState({isDesiredOrderSectionVisible: !this.state.isDesiredOrderSectionVisible})
+    // setIsDesiredOrderSectionVisible(!this.state.isDesiredOrderSectionVisible)
     if (this.state.headingIcon == "plus-square")
     {
       this.setState({headingIcon : "minus-square"});
@@ -119,9 +103,9 @@ class NewOrderScreen extends Component {
     const response = await fetch(BASE_URL + 'api/order', {
       method: 'POST',
       headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.state.token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.state.token}`,
       },
       body: JSON.stringify({
         orderNumber: orderNumber,
@@ -267,25 +251,6 @@ class NewOrderScreen extends Component {
               onChangeText={val => this.orderNumberTextInputChange(val)}
             />
           </View>
-          {/* <View style={styles.action}>
-            <TextInput
-              style={styles.textInput}
-              placeholder={'Tracking Number'}
-              placeholderTextColor={'#868686'}
-              // onChangeText={val => invitationCodeInputChange(val)}
-              // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
-            />
-          </View> */}
-          {/* <View style={styles.action}>
-            <TextInput
-              style={styles.textInput}
-              placeholder={'Order Date'}
-              type={"date"}
-              placeholderTextColor={'#868686'}
-              // onChangeText={val => invitationCodeInputChange(val)}
-              // onEndEditing={e => handleValidInvitationCode(e.nativeEvent.text)}
-            />
-          </View> */}
         
           <Text style={styles.heading}>Select order path*</Text>
         
@@ -387,13 +352,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     color: 'white',
     fontSize: 17,
-},
+  },
 
   iconButton: {
     color: "white", 
     fontSize: 22,
     paddingRight: 6,
-},
+  },
 
   action: {
     justifyContent: 'center',
@@ -416,7 +381,7 @@ const styles = StyleSheet.create({
 
   submitButton: {
     marginTop: 25,
-},
+  },
 });
 
 
