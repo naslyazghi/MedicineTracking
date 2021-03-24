@@ -191,7 +191,6 @@ class NewOrderScreen extends Component {
   }
 
 
-
   async placeOrder(orderNumber, selectedPath) {
     this.order.path = selectedPath;
     this.order.orderNumber = orderNumber;
@@ -398,7 +397,7 @@ class NewOrderScreen extends Component {
                   <Text style={styles.productHeading}>Product 3</Text>
                   <Text style={{marginLeft:18}}>Product 3 Details</Text> */}
 
-                  <Text style={styles.orderDetailsHeading}>Products</Text>
+                  {/* <Text style={styles.orderDetailsHeading}>Products</Text> */}
                   {this.order.items.map(this.callback())}
 
                   {/* Pop up dialog to add new identifier */}
@@ -469,22 +468,21 @@ const styles = StyleSheet.create({
   },
 
   heading: {
-    fontSize: 18,
-    marginTop: 30,
-    marginBottom: 2,
-    backgroundColor: '#74848f',
     width: '100%',
+    backgroundColor: '#0094FF',
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: 2,
+    marginBottom: 6,
+    marginTop: 15,
     color: 'white',
-    // textAlign: 'center',
+    fontSize: 20,
   },
 
   desiredOrder: {
-    marginTop: 120,
-    fontSize: 19,
+    marginTop: 140,
+    fontSize: 20,
     marginBottom: 2,
-    backgroundColor: '#74848f',
+    backgroundColor: '#0094FF',
     flexDirection: 'row',
     width: '100%',
     paddingHorizontal: 10,
@@ -530,8 +528,8 @@ const styles = StyleSheet.create({
     width: '35%',
     backgroundColor: '#74848f',
     flexDirection: 'row',
-    paddingHorizontal: 15,
-    paddingVertical: 2,
+    paddingHorizontal: 10,
+    paddingVertical: 1,
     marginHorizontal: 8,
     color: 'white',
     justifyContent: 'center',
@@ -576,7 +574,7 @@ const styles = StyleSheet.create({
   },
 
   submitButton: {
-    marginTop: 25,
+    marginTop: 80,
   },
 });
 
