@@ -8,21 +8,40 @@ import Feather from 'react-native-vector-icons/Feather';
 import jwt_decode from "jwt-decode";
 import functions from "../helperFunctions/helpers";
 import AsyncStorage from '@react-native-community/async-storage'
+import Moment from 'moment';
+import { upperCaseFirst } from "upper-case-first";
+import Dialog from "react-native-dialog";
 import {BASE_URL} from '../config';
 
 class NewOrderScreen extends Component {
   action = "create";
   resource = "order";
   refreshToken = global.refreshTokenConst;
+    
   state = {
     token: global.userTokenConst,
     pathList: [], 
-    selectedPath: '',
+    selectedPath: "",
     isDesiredOrderSectionVisible: false,
     headingIcon: "plus-square",
     paths: [],
-    orderNumber: "",
+    orderNumber: "0",
+    identifiers: [],
+    isAddNewProductDialogVisible: false,
+    isAddNewIdentifierDialogVisible: false,
+    productName: "",
+    productQuantity: 0,
+    identifierKey: "",
+    identifierValue: "",
   };
+  
+  order = {
+    orderNumber: "",
+    path: "",
+    items: [
+    ]
+  };
+
 
   async componentDidMount () {
     this.setState({token: await functions.getToken()})
@@ -82,7 +101,7 @@ class NewOrderScreen extends Component {
   orderNumberTextInputChange (val) {
     this.setState({orderNumber: val});
     console.log("orderNumber = " + this.state.orderNumber);
-  };
+  }
 
 
   showDesiredOrderSection() {
@@ -96,10 +115,87 @@ class NewOrderScreen extends Component {
     {
       this.setState({headingIcon : "plus-square"});
     }
-  };
+  }
+
+  showAddNewProductDialog () {
+    console.log("show add new product dialog");
+    // setIsAddNewProductDialogVisible(true);
+    this.setState({isAddNewProductDialogVisible: true});
+  }
+
+  showAddNewIdentifierDialog (identifier) {
+    console.log("here");
+    // setIdentifiers(identifier);
+    // setIsAddNewIdentifierDialogVisible(true);
+    this.setState({identifiers : identifier});
+    this.setState({isAddNewIdentifierDialogVisible : true});
+  }
+
+  handleCancel () {
+    // setIsAddNewProductDialogVisible(false);
+    // setIsAddNewIdentifierDialogVisible(false);
+    this.setState({isAddNewProductDialogVisible : false});
+    this.setState({isAddNewIdentifierDialogVisible : false});
+  }
+
+  newProductNameInputChange (val) {
+    // setProductName(val);
+    this.setState({productName : val});
+  }
+
+  newProductQuantityInputChange (val) {
+    // setProductQuantity(val);
+    this.setState({productQuantity : val});
+  }
+
+  newIdentifierKeyInputChange (val) {
+    // setIdentifierKey(val);
+    this.setState({identifierKey : val});
+  }
+
+  newIdentifierValueInputChange (val) {
+    // setIdentifierValue(val);
+    this.setState({identifierValue : val});
+  }
+
+  handleAddProduct () {
+    var productIdentifier = {"key":"name", "value":this.state.productName}
+    console.log("product identifier = " + JSON.stringify(productIdentifier));
+    var newProduct = {
+      // id: Math.floor(Math.random() * 100) + 1,
+      "product": {},
+      "quantity": this.state.productQuantity,
+      "desired": {"identifiers":[productIdentifier]},
+    }
+    console.log("new product = " + JSON.stringify(newProduct));
+    this.order.items.push(newProduct);
+    console.log("Order = " + JSON.stringify(this.order));
+    this.setState({isAddNewProductDialogVisible: false})
+    // setIsAddNewProductDialogVisible(false);
+  }
+
+  handleAddIdentifier () {
+    var productIdentifier = {"key":this.state.identifierKey, "value":this.state.identifierValue}
+    console.log("identifiers:" + JSON.stringify(this.state.identifiers));
+    this.state.identifiers.push(productIdentifier);
+    this.setState({isAddNewIdentifierDialogVisible: false});
+  }
+
+
+  clearOrder() {
+    this.setState({orderNumber: 0});
+    this.setState({selectedPath: ""});
+    this.order.orderNumber = "";
+    this.order.path = "";
+    this.order.items = [];
+  }
+
 
 
   async placeOrder(orderNumber, selectedPath) {
+    this.order.path = selectedPath;
+    this.order.orderNumber = orderNumber;
+    console.log("Order = " + JSON.stringify(this.order))
     const response = await fetch(BASE_URL + 'api/order', {
       method: 'POST',
       headers: {
@@ -107,12 +203,7 @@ class NewOrderScreen extends Component {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.state.token}`,
       },
-      body: JSON.stringify({
-        orderNumber: orderNumber,
-        path: selectedPath,
-        items: [
-        ]
-      }),
+      body: JSON.stringify(this.order),
     });
     // console.log(response);
     // 2 - Parsing the response
@@ -122,15 +213,41 @@ class NewOrderScreen extends Component {
       Alert.alert('Error', res.message, [
         {text: 'OK'},
       ]);
-      return null;
     }
     else 
     {
-      Alert.alert('Success', res.message, [
-        {text: 'OK'},
-      ]);
-      return res.Content;
+      Alert.alert('Success', 
+        (res.message + "\n" + "Order Id: " + res.Content._id), 
+        [{text: 'OK'},]
+      );
+      this.clearOrder();
     }
+  }
+
+
+  callback(){
+    const thisClass = this;
+    return (item, i) => {
+        return <View style={styles.listItemValue} key={i}>
+          {/* <Text style={styles.productHeading}>{"Product " + (i+1)}</Text> */}
+          <Text style={styles.productHeading}>{"Product " + (i+1)}</Text>
+          <View>
+              {item.desired.identifiers.map((prod, j) => (
+                  <View >
+                      <Text style={styles.listItemKey} key={j}>
+                          {prod.key + ": "} 
+                          <Text style={styles.listItemValue}>{prod.value}</Text>
+                      </Text>
+                  </View>
+              ))}
+          </View>
+          <Text style={styles.listItemKey}>{"Quantity: " + item.quantity}</Text>
+          {/* Add a new identifier */}
+          <TouchableOpacity onPress={() => {thisClass.showAddNewIdentifierDialog(item.desired.identifiers)}}>
+              <Text style={styles.addNewIdentifierButton}>Add identifier</Text>
+          </TouchableOpacity>
+        </View>
+      }
   }
 
 
@@ -274,12 +391,46 @@ class NewOrderScreen extends Component {
             {
               this.state.isDesiredOrderSectionVisible == true ? 
                 <View>
-                  <Text style={styles.productHeading}>Product 1</Text>
+                  {/* <Text style={styles.productHeading}>Product 1</Text>
                   <Text style={{marginLeft:18}}>Product 1 Details</Text>
                   <Text style={styles.productHeading}>Product 2</Text>
                   <Text style={{marginLeft:18}}>Product 2 Details</Text>
                   <Text style={styles.productHeading}>Product 3</Text>
-                  <Text style={{marginLeft:18}}>Product 3 Details</Text>
+                  <Text style={{marginLeft:18}}>Product 3 Details</Text> */}
+
+                  <Text style={styles.orderDetailsHeading}>Products</Text>
+                  {this.order.items.map(this.callback())}
+
+                  {/* Pop up dialog to add new identifier */}
+                  <Dialog.Container visible={this.state.isAddNewIdentifierDialogVisible}>
+                    <Dialog.Title>Add Identifier</Dialog.Title>
+                    <Dialog.Description>
+                        Add an identifier for the product
+                    </Dialog.Description>
+                    <Dialog.Input placeholder={'key'} onChangeText={val => this.newIdentifierKeyInputChange(val)}/>
+                    <Dialog.Input placeholder={'Value'} onChangeText={val => this.newIdentifierValueInputChange(val)}/>
+                    <Dialog.Button label="Cancel" onPress={this.handleCancel} />
+                    <Dialog.Button label="Add" onPress={() => {
+                        this.handleAddIdentifier()}}
+                    />
+                  </Dialog.Container>
+
+                  {/* Add a new product */}
+                  <TouchableOpacity style={styles.newProductsButton} onPress={() => {this.showAddNewProductDialog()}}>
+                    <Feather name={"plus-square"} style={styles.iconButton} />
+                    <Text style={{fontSize:17, color:'white'}}>Add Product</Text>
+                  </TouchableOpacity>
+                  {/* Pop up dialog to add new product */}
+                  <Dialog.Container visible={this.state.isAddNewProductDialogVisible}>
+                    <Dialog.Title>Add Product</Dialog.Title>
+                    <Dialog.Description>
+                        Add the product Name bellow
+                    </Dialog.Description>
+                    <Dialog.Input placeholder={'Name'} onChangeText={val => this.newProductNameInputChange(val)}/>
+                    <Dialog.Input keyboardType = 'numeric' placeholder={'Quantity'} onChangeText={val => this.newProductQuantityInputChange(val)}/>
+                    <Dialog.Button label="Cancel" onPress={() => {this.handleCancel()}} />
+                    <Dialog.Button label="Add" onPress={() => {this.handleAddProduct()}} />
+                  </Dialog.Container>
                 </View> 
                 :
                 null
@@ -373,6 +524,51 @@ const styles = StyleSheet.create({
     borderColor: '#868686',
     backgroundColor: '#FFFFFF',
   },
+
+  newProductsButton: {
+    marginTop: 5,
+    width: '35%',
+    backgroundColor: '#74848f',
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    paddingVertical: 2,
+    marginHorizontal: 8,
+    color: 'white',
+    justifyContent: 'center',
+},
+
+  orderDetailsHeading: {
+    backgroundColor: '#0094FF',
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    marginBottom: 6,
+    marginTop: 25,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+  },
+
+  listItemKey: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#5f6b73',
+    marginLeft: 20,
+  },
+
+  listItemValue: {
+      fontSize: 17,
+      fontWeight: 'normal',
+      color: '#5f6b73',
+  },
+
+  addNewIdentifierButton: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#0094FF',
+    marginLeft: 20,
+    marginBottom: 10,
+    marginTop: 5,
+},
 
   picker: {
     marginTop: 0,
