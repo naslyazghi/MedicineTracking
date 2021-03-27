@@ -25,7 +25,6 @@ const helpers = {
             return newToken;
         }
     },
-    
 
 
     refreshToken: async function() {
@@ -43,7 +42,7 @@ const helpers = {
             }),
         });
 
-        console.log("token response = " + JSON.stringify(response));
+        // console.log("token response = " + JSON.stringify(response));
         // 2 - Parsing the response
         var res = JSON.parse(await response.text());
         if (!res.response) 
@@ -64,6 +63,24 @@ const helpers = {
             return res.Content;
         }
     },
+
+
+    decodeToken: async function(token) {
+        var decoded = jwt_decode(token);
+        console.log("decoded = " + JSON.stringify(decoded));
+        return decoded;
+    },
+
+
+    getColor: function(status) {
+        const color = status === "CANCELED" || status === "DELAYED" ? 
+            '#d90041' 
+            : 
+            (status === "COMPLETE" ? '#00b884' : '#0094FF');
+        
+        return color;
+    }
+        
 }
 
 export default helpers;

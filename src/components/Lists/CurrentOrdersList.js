@@ -6,31 +6,27 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {CurrentOrderDetailsScreen} from '../../screens/CurrentOrderDetailsScreen'
 import {CurrentOrderDetailsEditableScreen} from '../../screens/CurrentOrderDetailsEditableScreen'
 import {useNavigation} from '@react-navigation/native';
-
-//global.groupId = null;
+import helperFunctions from "../../helperFunctions/helpers";
 
 const CurrentOrdersList = ({itemList}) => {
-    var backCount = 0;
-    var backTimer;
     const navigation = useNavigation();
-    //console.log(itemList);
     const [selectedId, setSelectedId] = React.useState(null);
+    
+    // itemList.map(order => { 
+    //     order.user = order?.user?.name; 
+    //     return order 
+    // })
 
     const renderItem = ({item}) => {
-        //const backgroundColor = item.id === selectedId ? '#1B1921' : '#1B1921';
-        const borderWidth = item.id === selectedId ? 1.7 : 0.0;
-        const borderColor = item.status === "Arriving Late" || item.status === "Unknown" ? '#d90041' : '#0094FF';
-
-        // global.groupId = selectedId;
-        // console.log('Id selected = ' + selectedId);
-        // console.log('Global id = ' + global.id);
+        const borderWidth = item._id === selectedId ? 2 : 0.0;
+        const borderColor = helperFunctions.getColor(item?.status);
 
         return (
             <CurrentOrdersListItem
-                id={item.id}
+                id={item._id}
                 selectedId={selectedId}
                 // image_url={'https://homepages.cae.wisc.edu/~ece533/images/cat.png'}
-                onPress={() => {setSelectedId(item.id)}}
+                onPress={() => {setSelectedId(item._id)}}
                 onLongPress={() => navigation.navigate('CurrentOrderDetailsEditable', {order: item})}
                 style={{borderColor, borderWidth}}
                 order={item}
@@ -44,7 +40,7 @@ const CurrentOrdersList = ({itemList}) => {
             <FlatList
                 data={itemList}
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 extraData={selectedId}
             />
         </SafeAreaView>

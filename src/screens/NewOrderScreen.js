@@ -17,6 +17,7 @@ class NewOrderScreen extends Component {
   action = "create";
   resource = "order";
   refreshToken = global.refreshTokenConst;
+  // decodedToken = functions.decodeToken(global.userTokenConst)
     
   state = {
     token: global.userTokenConst,
@@ -38,8 +39,8 @@ class NewOrderScreen extends Component {
   order = {
     orderNumber: "",
     path: "",
-    items: [
-    ]
+    // user: this.decodedToken.user,
+    items: []
   };
 
 
