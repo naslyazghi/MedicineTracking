@@ -13,7 +13,7 @@ import BarCodeScanner from '../screens/OrderQRScanner'
 import {QRTab} from '../tabNavigators/QRCodeTab'
 import ScanQRCodeStackScreen from '../subStacks/ScanQRCodeStackScreen'
 import ProductQRStackScreen from '../subStacks/ProductScanQRStackScreen'
-
+import SearchEachesResultsStackScreen from '../subStacks/SearchEachesResultsStackScreen'
 
 const Drawer = createDrawerNavigator();
 
@@ -30,6 +30,7 @@ const MainStackScreen = ({navigation}) => (
         <Drawer.Screen name="QRTab" component={QRTab}/> 
         <Drawer.Screen name="OrderScanner" component={ScanQRCodeStackScreen}/> 
         <Drawer.Screen name="ProductScanner" component={ProductQRStackScreen}/> 
+        <Drawer.Screen name="SearchEachesResults" component={SearchEachesResultsStackScreen}/> 
     </Drawer.Navigator>
     
 );

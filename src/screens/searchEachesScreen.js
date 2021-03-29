@@ -35,7 +35,7 @@ const searchEachesScreen = ({navigation}) => {
         />
         <Button 
         title={'Tap to Search'} 
-        onPress={() => setScanned(false)} 
+        /*onPress={navigation.navigate("SearchEachesResults", {ndc, propname, labeler})} */
         />
       </View>  
 
