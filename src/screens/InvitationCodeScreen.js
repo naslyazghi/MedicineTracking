@@ -4,8 +4,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as Animatable from 'react-native-animatable';
 import {FilledButton} from '../components/FilledButton';
-// const BASE_URL = 'http://localhost:8080/';
-const BASE_URL = 'http://10.0.0.5:8080/';
+import {BASE_URL} from '../config';
 
 export function InvitationCodeScreen({navigation}) {
     const [data, setData] = React.useState({

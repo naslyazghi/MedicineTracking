@@ -13,6 +13,8 @@ import { upperCaseFirst } from "upper-case-first";
 import Dialog from "react-native-dialog";
 import {BASE_URL} from '../config';
 
+
+
 class NewOrderScreen extends Component {
   action = "create";
   resource = "order";
@@ -108,16 +110,7 @@ class NewOrderScreen extends Component {
   showDesiredOrderSection() {
     this.setState({isDesiredOrderSectionVisible: !this.state.isDesiredOrderSectionVisible})
     // setIsDesiredOrderSectionVisible(!this.state.isDesiredOrderSectionVisible)
-    if (this.state.headingIcon == "plus-square")
-    {
-      this.setState({headingIcon : "minus-square"});
-    }
-    else
-    {
-      this.setState({headingIcon : "plus-square"});
-    }
   }
-
   showAddNewProductDialog () {
     console.log("show add new product dialog");
     // setIsAddNewProductDialogVisible(true);
