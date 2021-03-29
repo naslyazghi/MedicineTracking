@@ -80,6 +80,7 @@ export default searchEachesScreen;
 import React, { Component } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { ListItem, SearchBar } from 'react-native-elements';
+import {BASE_URL} from '../config';
 
 class searchEachesScreen extends Component {
   constructor(props) {
@@ -97,13 +98,15 @@ class searchEachesScreen extends Component {
   componentDidMount() {
     this.makeRemoteRequest();
   }
+
   makeRemoteRequest = () => {
     const url = `https://randomuser.me/api/?&results=20`;
     this.setState({ loading: true });
 
-    fetch(url)
+    fetch(BASE_URL + url)
       .then(res => res.json())
       .then(res => {
+        console.log(response.body);
         this.setState({
           data: res.results,
           error: res.error || null,
