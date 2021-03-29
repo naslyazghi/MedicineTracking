@@ -8,6 +8,7 @@ import DeliveredOrdersStackScreen from '../subStacks/DeliveredOrdersStackScreen'
 // import {DeliveredOrdersScreen} from '../screens/DeliveredOrdersScreen';
 // import {CurrentOrdersScreen} from '../screens/CurrentOrdersScreen';
 import CurrentOrdersStackScreen from '../subStacks/CurrentOrdersStackScreen';
+import SearchEachesStackScreen from '../subStacks/SearchEachesStackScreen';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -50,6 +51,19 @@ export function OrdersTab({navigation}) {
             tabBarLabel: 'Delivered Orders',
             tabBarIcon: ({color}) => (
               <Feather name="check-square" color={color} size={26} />
+            ),
+          }}
+        />
+
+          {/* Search Eaches tab */}
+          <Tab.Screen
+          name="Search Eaches"
+          component={SearchEachesStackScreen}
+          //initialParams={{token: token}}
+          options={{
+            tabBarLabel: 'Search',
+            tabBarIcon: ({color}) => (
+              <Feather name="search" color={color} size={26} />
             ),
           }}
         />
