@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TextInput, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image } from 'react-native';
+import {searchProducts} from '../service/eachesService'
 
-const axios = require('axios').default;
-const NDC_URL = 'https://api.fda.gov/drug/ndc.json';
+
 
 const searchEachesScreen = ({navigation}) => {
     const [scanned, setScanned] = useState(true);
@@ -10,27 +10,9 @@ const searchEachesScreen = ({navigation}) => {
     const [propname, setPropname ] = useState("");
     const [labeler, setLabeler ] = useState("");
 
-    async function search(query, limit=1, skip=0) {
-      return axios.get(`${NDC_URL}?search=${query}`)
-          .then( (response) => {
-            if (response.data.error != undefined) throw response.data;
-            return {
-              success: true,
-              message: `Successfully completed ndc search`,
-              content: response.data.results,
-            };
-          })
-          .catch((err) => {
-            return {
-              success: false,
-              message: `Error ocurred during ndc search`,
-              content: err,
-            };
-          });
-    };
 
-    search('product_ndc:73126-010').then(res => console.log(res))
-
+    //search('product_ndc:73145-010').then(res => console.log(res))
+    searchProducts('aspirin').then(res => console.log(res));
     return (
     <View style={styles.container}>
       <Text style={styles.heading}>Enter as much information you have</Text>
@@ -58,7 +40,7 @@ const searchEachesScreen = ({navigation}) => {
         />
         <Button 
         title={'Tap to Search'} 
-        onPress={navigation.navigate("SearchEachesResults", {ndc, propname, labeler})} 
+        /*onPress={navigation.navigate("SearchEachesResults", {ndc, propname, labeler})} */
         />
       </View>  
 
