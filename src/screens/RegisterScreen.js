@@ -4,8 +4,6 @@ import {Heading} from '../components/Heading';
 import {FilledButton} from '../components/FilledButton';
 import {TextButton} from '../components/TextButton';
 import {Error} from '../components/Error';
-//import {AuthContainer} from '../components/AuthContainer';
-//import {AuthContext} from '../contexts/AuthContext';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import * as Animatable from 'react-native-animatable';

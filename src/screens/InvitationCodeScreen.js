@@ -6,6 +6,8 @@ import * as Animatable from 'react-native-animatable';
 import {FilledButton} from '../components/FilledButton';
 import {BASE_URL} from '../config';
 
+
+
 export function InvitationCodeScreen({navigation}) {
     const [data, setData] = React.useState({
         email: '',

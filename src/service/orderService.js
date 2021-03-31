@@ -9,7 +9,7 @@ async function getOrdersList() {
         return response.data;
     } catch (error) {
         // handle error
-        alert(error.message);
+        alert(error.response.data.message);
         return null;
     }
 }
@@ -22,7 +22,7 @@ async function getOrdersByPath(action, resource, path, token) {
         return response.data;
     } catch (error) {
         // handle error
-        alert(error.message);
+        alert(error.response.data.message);
         return null;
     }
 }
@@ -32,7 +32,7 @@ async function getOrdersByPathRecursive(action, resource, path, token) {
     console.log("action = " + action);
     console.log("resource = " + resource);
     console.log("path = " + path);
-    console.log("token = " + JSON.stringify(token));
+    console.log("token = " + token);
     const config = {
         headers: { Authorization: `Bearer ${token}` }
     };
@@ -46,11 +46,13 @@ async function getOrdersByPathRecursive(action, resource, path, token) {
             },
             config
         );
-        alert(JSON.stringify(response.data));
+        console.log("Successfuly got the orders by path recursive");
         return response.data;
-    } catch (error) {
-        // handle error
-        alert(error.message);
+    } 
+    catch (error) 
+    {
+        console.log("Failed to get orders by path recursive");
+        console.log("Error = " + error.response.data.message);
         return null;
     }
 }

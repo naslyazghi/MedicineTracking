@@ -1,68 +1,103 @@
+import React from 'react';
 import jwt_decode from "jwt-decode";
 import AsyncStorage from '@react-native-community/async-storage';
 import {Alert,} from 'react-native';
 import {BASE_URL} from '../config';
+import {getNewToken} from '../service/authorizationService';
+
+
 
 const helpers = {
     getToken: async function() {
-        var userToken = global.userTokenConst;
-        var decoded = jwt_decode(userToken);
-        // console.log("decoded = " + JSON.stringify(decoded));
-        var exp = decoded.exp * 1000;
-        // console.log("EXP = " + exp + " & Date.now = " + Date.now());
-    
-        if (Date.now() < exp)
+        // var userToken = global.userTokenConst;
+        var userToken = await AsyncStorage.getItem('userToken');
+        console.log("{getToken} => Current token = " + JSON.stringify(userToken));
+        
+        var isTokenExpired = await this.checkTokenIfExpired().then(data => data);
+        if (isTokenExpired)
         {
-            console.log("Not Expired");
-            // return false;
-            return global.userTokenConst;
+            console.log("{getToken} => Expired");
+            var newToken = await this.refreshToken().then(data => data);
+            console.log("{getToken} => Updated New Token = " + newToken);
+            // Update local storage
+            await AsyncStorage.removeItem('userToken');
+            await AsyncStorage.setItem('userToken', newToken);
+
+            return newToken;
         }
         else
         {
-            console.log("Expired");
-            // return true
-            var newToken = this.refreshToken();
-            return newToken;
+            console.log("{getToken} => Not Expired");
+            // return global.userTokenConst;
+            return userToken;
         }
     },
 
 
+
+    checkTokenIfExpired: async function() {
+        // var userToken = global.userTokenConst;
+        var userToken = await AsyncStorage.getItem('userToken');
+        var decoded = jwt_decode(userToken);
+        var exp = decoded.exp * 1000;
+        if (Date.now() < exp)
+        {
+            return false;
+        }
+        else
+        {
+            return true
+        }
+    },
+
+
+
+    checkRefreshTokenIfExpired: async function() {
+        const refreshToken = await AsyncStorage.getItem('refreshToken');
+        var decoded = jwt_decode(refreshToken);
+        var exp = decoded.exp * 1000;
+        if (Date.now() < exp)
+        {
+            console.log("valid refresh token!!");
+            return false;
+        }
+        else
+        {
+            console.log("invalid refresh token!!");
+            return true
+        }
+    },
+
+
+    
     refreshToken: async function() {
         const refreshToken = await AsyncStorage.getItem('refreshToken');
-        console.log("Refreshing Token ...")
-        console.log("refresh token = " + JSON.stringify(refreshToken));
-        const response = await fetch(BASE_URL + 'api/user/token', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                refreshToken: refreshToken,
-            }),
-        });
+        console.log("{refreshToken} => refresh token = " + JSON.stringify(refreshToken));
 
-        // console.log("token response = " + JSON.stringify(response));
+        const res = await getNewToken(refreshToken);
+
         // 2 - Parsing the response
-        var res = JSON.parse(await response.text());
+        // var res = JSON.parse(await response.text());
         if (!res.response) 
         {
-            console.log("response failed => response = " + res.response + " res.message = " + res.message);
-            Alert.alert('Error', res.message, [
-                {text: 'OK'},
-            ]);
+            console.log("{refreshToken} => response failed => response = " + res.response + " res.message = " + res.message);
+            console.log("{refreshToken} => error = " + res.message);
+            // Alert.alert('Error', res.message, [
+            //     {text: 'OK'},
+            // ]);
             return null;
         }
         else 
         {
-            console.log("Token refreshed")
+            console.log("{refreshToken} => Token refreshed");
             global.userTokenConst = res.Content;
             // Update Local storage
             // await AsyncStorage.mergeItem('userToken', res.Content);
-            // console.log("Token = " + JSON.stringify(res.Content));
+            console.log("{refreshToken} => New Token = " + JSON.stringify(res.Content));
             return res.Content;
         }
     },
+
 
 
     decodeToken: async function(token) {
@@ -70,6 +105,7 @@ const helpers = {
         console.log("decoded = " + JSON.stringify(decoded));
         return decoded;
     },
+
 
 
     getColor: function(status) {
@@ -80,7 +116,6 @@ const helpers = {
         
         return color;
     }
-        
 }
 
 export default helpers;

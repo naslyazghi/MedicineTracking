@@ -2,27 +2,26 @@ import React, { Component } from 'react';
 import { AppRegistry, ScrollView, View, TextInput, Text, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image, Alert} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {FilledButton} from '../components/FilledButton';
-import {TextButton} from '../components/TextButton';
-import { color } from 'react-native-reanimated';
 import Feather from 'react-native-vector-icons/Feather';
-import jwt_decode from "jwt-decode";
 import functions from "../helperFunctions/helpers";
-import AsyncStorage from '@react-native-community/async-storage'
 import Moment from 'moment';
 import { upperCaseFirst } from "upper-case-first";
 import Dialog from "react-native-dialog";
 import {BASE_URL} from '../config';
+import {AuthContext} from '../contexts/AuthContext';
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 
 class NewOrderScreen extends Component {
+  //static contextType = AuthContext;
+
   action = "create";
   resource = "order";
-  refreshToken = global.refreshTokenConst;
-  // decodedToken = functions.decodeToken(global.userTokenConst)
-    
+  // refreshToken = global.refreshTokenConst;
+  
   state = {
-    token: global.userTokenConst,
+    token: "",
     pathList: [], 
     selectedPath: "",
     isDesiredOrderSectionVisible: false,
@@ -41,12 +40,21 @@ class NewOrderScreen extends Component {
   order = {
     orderNumber: "",
     path: "",
-    // user: this.decodedToken.user,
     items: []
   };
-
-
+  
+  
   async componentDidMount () {
+    //assign context to component
+    //const {signOut} = this.context;
+
+    // Check if refreshtoken is expired, if so, sign out the user
+    // var isRefreshedTokenExpired = functions.checkRefreshTokenIfExpired();
+    // if (isRefreshedTokenExpired)
+    // {
+    //   signOut();
+    // }
+    console.log("{New Order Screen} => componentDidMount")
     this.setState({token: await functions.getToken()})
     this.setState({pathList: await this.getPathList()}) 
     this.processPathList();
@@ -58,6 +66,7 @@ class NewOrderScreen extends Component {
     // console.log("Get complete path list function called ...");
     if (this.state.pathList !== null)
     {
+      this.setState({selectedPath: this.state.pathList[0]});
       var val = this.state.pathList.map((value, index) => {
         // console.log('value: ' + value + " / index: " + index);
         return <Picker.Item label={value} value={value} key={index} />;
@@ -69,6 +78,7 @@ class NewOrderScreen extends Component {
 
 
   async getPathList () {
+    // this.setState({token: await functions.getToken()})
     const response = await fetch(BASE_URL + 'api/inventory/complete_paths', {
       method: 'POST',
       headers: {
@@ -81,21 +91,23 @@ class NewOrderScreen extends Component {
         resource: this.resource,
       }),
     });
-    console.log("Path response = " + JSON.stringify(response));
+    // console.log("{New Order Screen} => Path response = " + JSON.stringify(response));
     // 2 - Parsing the response
     var res = JSON.parse(await response.text());
     if (!res.response) 
     {
-      console.log("Path response message = " + JSON.stringify(res.response));
-      Alert.alert('Error', res.message, [
-        {text: 'OK'},
-      ]);
+      console.log("{New Order Screen} => Path response message = " + JSON.stringify(res.response));
+      // Alert.alert('Error', res.message, [
+      //   {text: 'OK'},
+      // ]);
       return null;
     }
     else 
     {
-      console.log("Path response message = " + JSON.stringify(res.response));
-      console.log("Path response content = " + JSON.stringify(res.Content));
+      // console.log("{New Order Screen} => Path response message = " + JSON.stringify(res.response));
+      console.log("{New Order Screen} => Path response content = " + JSON.stringify(res.Content));
+      var userToken = await AsyncStorage.getItem('userToken');
+      console.log("{New Order Screen} => Current token = " + JSON.stringify(userToken) + "\n\n\n\n");
       return res.Content;
     }
   }
@@ -177,8 +189,17 @@ class NewOrderScreen extends Component {
 
 
   clearOrder() {
-    this.setState({orderNumber: 0});
-    this.setState({selectedPath: ""});
+    this.setState({orderNumber: ""});
+    this.setState({isDesiredOrderSectionVisible: false});
+    this.setState({headingIcon: "plus-square"});
+    this.setState({isAddNewProductDialogVisible: false});
+    this.setState({isAddNewIdentifierDialogVisible: false});
+    this.setState({identifiers: []});
+    this.setState({productName: ""});
+    this.setState({productQuantity: 0});
+    this.setState({identifierKey: ""});
+    this.setState({identifierValue: ""});
+    this.setState({selectedPath: this.state.pathList[0]})
     this.order.orderNumber = "";
     this.order.path = "";
     this.order.items = [];
@@ -186,6 +207,7 @@ class NewOrderScreen extends Component {
 
 
   async placeOrder(orderNumber, selectedPath) {
+    this.setState({token: await functions.getToken()})
     this.order.path = selectedPath;
     this.order.orderNumber = orderNumber;
     console.log("Order = " + JSON.stringify(this.order))
@@ -214,6 +236,8 @@ class NewOrderScreen extends Component {
         [{text: 'OK'},]
       );
       this.clearOrder();
+      this.props.navigation.navigate('Current Orders');
+      //this.props.navigation.goBack()
     }
   }
 
@@ -243,109 +267,6 @@ class NewOrderScreen extends Component {
       }
   }
 
-
-
-  orderExample = [
-    { 
-      id: '9125334514',
-      path: '/home/inv1/inv12',
-      user: 'Jason Smith',
-      order_date: '2021-02-14T19:07:38.511',
-      status: 'Arriving Late',
-      expectedDelivery: '05-10-2021',
-      trackingNumber: '64212466665451288',
-
-      items: [
-        {
-          quantity: 5,
-          product: {
-              identifiers: [
-                  {key: 'Name', value: 'Aspirin'}
-              ]
-          },
-          desired: {
-            identifiers: [
-              {key: 'Name', value: 'Salve'}
-            ]
-          }
-        },
-        {
-          quantity: 3,
-          product: {
-            identifiers: [
-              {key: 'Name', value: 'Bandage'},
-              {key: 'NDC', value: '123-1245-23'}
-            ]
-          },
-          desired: {
-            identifiers: [
-              {key: 'Name', value: 'Salve'}
-            ]
-          }
-        }
-      ],
-      
-      log: [
-        {
-          date: '2021-02-14T20:09:22.235',
-          message: 'order approved by mlc',
-        },
-        {
-          date: '2021-02-17T09:23:21.934',
-          message: 'order arrived at mlc',
-        },
-      ],
-    },
-
-    { 
-      id: '13654886599',
-      path: '/home/inv2/inv22',
-      user: 'Adam Clark',
-      order_date: '2021-02-14T19:07:38.511',
-      status: 'Shipped',
-      expectedDelivery: '03-05-2021',
-      trackingNumber: '12254656984232156',
-      items: [
-        {
-          product: {
-              identifiers: [
-                  {key: 'Name', value: 'Tylenol'}
-              ]
-          },
-          quantity: 5,
-          desired: {
-            identifiers: [
-              {key: 'Name', value: 'Salve'}
-            ]
-          }
-        },
-        {
-          product: {
-            identifiers: [
-              {key: 'Name', value: 'Bandage'},
-              {key: 'NDC', value: '123-1245-23'}
-            ]
-          },
-          quantity: 3,
-          desired: {
-            identifiers: [
-              {key: 'Name', value: 'Salve'}
-            ]
-          }
-        }
-      ],
-      log: [
-        {
-          date: '2021-02-14T20:09:22.235',
-          message: 'Order approved by mlc',
-        },
-        {
-          date: '2021-02-17T09:23:21.934',
-          message: 'Order arrived at mlc',
-        },
-      ],
-    }
-  ];
 
 
   render() {
