@@ -15,7 +15,7 @@ export default class FlatListBasics extends Component {
     console.log(response.Content.length);
     if(response.Content.length > 0) {
       this.setState({response});
-      //console.log(this.state)
+      console.log(response)
       for( var i =0; i < response.Content.length; i++) {
         //console.log(response.Content[i].identifiers)
        // console.log('HHHHHEEEEEBBBBBBBBEEEE')

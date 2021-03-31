@@ -57,10 +57,29 @@ async function getOrdersByPathRecursive(action, resource, path, token) {
     }
 }
 
+// Post order location and message
+async function postOrderInfo(ordernum, location, msg, token) {
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+    const response = axios.put(BASE_URL + 'api/order/by_order_number/log', {
+        orderNumber: ordernum, 
+        currentLocation: location,
+        message: msg
+    }, config).then( response => {
+        console.log("Successfuly posted order info");
+        console.log(response.data)
+        return response.data;
+    }).catch(error => {
+        console.log(error)
+    });
+}
+
 module.exports = {
     getOrdersList,
     getOrdersByPath,
     getOrdersByPathRecursive,
+    postOrderInfo
 };
 
 

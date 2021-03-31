@@ -4,34 +4,8 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { createIconSetFromFontello } from 'react-native-vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-//add back button to this screen or add toolbar (currentorderdetailseditablescreeen for example)
-
-
-const qrcode_type = {
-    "order": (parsed_data, navigation) => {
-        //Add functionality to update status
-        //recieved by mlc, update status to packaging/ready to pickup/out for delivery
-        //changes hands (order moves to new inventory), pass to sub-inventories 
-        //at mlc -> out for delivery -> user
-        //1) dropdown menu what you update status to and add message 
-        ///// ex) order comes into mlc + is destoryed
-        ///// ex) order is running late 
-        ///// ex) order is being repackaged
-        //or//
-        //2) pass to a new inventory and message as such
-            // ex) order was recieved at MLC
-            // ex) order was switched to outgoing shipment inventory
-
-        //add notifications for those ^^^^ (put into own folder.. use it here or use it in a different part of app)
-       // navigation.navigate("TransitMessage", {parsed_data});
-       
-    },
-    "product": (parsed_data) => {
-        //add functionality to update quantity of item at current base
-        //check out or check in a product at the base
-        alert(` ${parsed_data.redirect}`);
-    }
-}
+import {postOrderInfo} from '../service/orderService';
+import helpers from '../helperFunctions/helpers';
 
 
 export default function App({navigation}) {
@@ -57,6 +31,8 @@ export default function App({navigation}) {
 
   const test = (data) => {
     console.log(data);
+    //var parsed_data = JSON.parse(data);
+    //postOrderInfo(parsed_data.num, location, message);
     try {
       var parsed_data = JSON.parse(data);
       if("type" in parsed_data) {
@@ -68,14 +44,24 @@ export default function App({navigation}) {
             alert('Please Choose Location and/or Leave a Message and try again')
           }
           else {
-            alert(`Success! Order ${parsed_data.num} has been updated with location ${location} and message ${message}!`);
+            try {
+             console.log("hello?")
+             helpers.getToken().then(token => {
+               console.log(token)
+               postOrderInfo(parsed_data.num, location, message, token)
+             });
+              alert(`Success! Order ${parsed_data.num} has been updated with location ${location} and message ${message}!`);
+           }
+            catch {
+              alert('Failed to update order')
+            }
           }
         }
         else if (parsed_data.type == "product") {
           alert('Wrong QR scanner, redirecting to the correct one');
         }
         else {
-          alert('Invalid QR Code')
+          alert('Invalid QR Code - j')
         }
       } 
     }
