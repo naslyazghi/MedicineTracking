@@ -81,41 +81,40 @@ export default function App({navigation}) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Add Message to Order</Text>
-      <View style={styles.action}>
-        <DropDownPicker
-            items={[
-                {label: 'Order at MLC', value: 'mlc'},
-                {label: 'Order in Transit', value: 'transit'},
-                {label: 'Order Ready for Pickup', value: 'pickup'}
-            ]}
-            containerStyle={{height: 40}}
-            style={{backgroundColor: '#fafafa'}}
-            itemStyle={{
-                justifyContent: 'flex-start'
-            }}
-            dropDownStyle={{backgroundColor: '#fafafa'}}
-            onChangeItem={item => {
-              setLocation(item.value);
-            }}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder={'Add a Message for the recipient'}
-          placeholderTextColor={'#868686'}
-          onChangeText={(msg) => setMessage(msg)}
-          value={message}
-        />
-        <Button 
-        title={'Tap to Scan'} 
-        onPress={() => setScanned(false)} 
-        />
-      </View>  
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={styles.cameraScanner}
        // style={StyleSheet.absoluteFillObject}
       />   
+      <DropDownPicker
+          items={[
+              {label: 'Order at MLC', value: 'mlc'},
+              {label: 'Order in Transit', value: 'transit'},
+              {label: 'Order Ready for Pickup', value: 'pickup'}
+          ]}
+          containerStyle={{height: 40, width:'90%', marginVertical: 10,}}
+          // style={{backgroundColor: '#fafafa'}}
+          // itemStyle={{
+          //     justifyContent: 'flex-start'
+          // }}
+          // dropDownStyle={{backgroundColor: '#fafafa'}}
+          onChangeItem={item => {
+            setLocation(item.value);
+          }}
+      />
+      <View style={styles.action}>
+        <TextInput
+          style={styles.textInput}
+          placeholder={'Add a Message for the recipient'}
+          placeholderTextColor={'#868686'}
+          onChangeText={(msg) => setMessage(msg)}
+          value={message}
+        />
+      </View>  
+      <Button 
+        title={'Tap to Scan'} 
+        onPress={() => setScanned(false)} 
+      />
 
     </View>
   );
@@ -123,9 +122,10 @@ export default function App({navigation}) {
 
 const styles = StyleSheet.create({
     container: {
-      backgroundColor: 'white',
-      alignItems: 'center',
       justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 10,
+      paddingBottom: 30,
   },
 
   input: {
@@ -135,6 +135,29 @@ const styles = StyleSheet.create({
       margin: 10,
       borderRadius: 5,
       padding: 5,
+  },
+
+  action: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '90%',
+    flexDirection: 'row',
+    marginTop: 5,
+    marginBottom: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 11,
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#868686',
+    backgroundColor: '#FFFFFF',
+  },
+
+  textInput: {
+    fontSize: 16,
+    flex: 1,
+    marginTop: 0,
+    paddingLeft: 10,
+    color: '#000000',
   },
 
   cameraScanner: {
