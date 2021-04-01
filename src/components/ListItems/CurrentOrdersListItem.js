@@ -33,6 +33,9 @@ const CurrentOrdersListItem = ({id, selectedId, onPress, onLongPress, style, ord
                         <Text style={styles.listItemKey}>{"Ordered by:  "}
                             <Text style={styles.listItemValue}>{order.user}</Text>
                         </Text>
+                        <Text style={styles.listItemKey}>{"Location: "} 
+                            <Text style={styles.listItemValue}>{order.currentLocation}</Text>
+                        </Text>
                         <Text style={styles.listItemKey}>{"Destination:  "} 
                             <Text style={styles.listItemValue}>{order.path}</Text>
                         </Text>
@@ -75,6 +78,9 @@ const CurrentOrdersListItem = ({id, selectedId, onPress, onLongPress, style, ord
                         </Text>
                         <Text style={styles.listItemKey}>{"Ordered by: "}
                             <Text style={styles.listItemValue}>{order.user}</Text>
+                        </Text>
+                        <Text style={styles.listItemKey}>{"Location: "} 
+                            <Text style={styles.listItemValue}>{order.currentLocation}</Text>
                         </Text>
                         <Text style={styles.listItemKey}>{"Destination: "} 
                             <Text style={styles.listItemValue}>{order.path}</Text>

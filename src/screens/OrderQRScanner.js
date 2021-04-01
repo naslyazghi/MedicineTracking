@@ -83,9 +83,9 @@ export default function App({navigation}) {
     <View style={styles.container}> 
       <DropDownPicker
           items={[
-              {label: 'Order at MLC', value: 'mlc'},
-              {label: 'Order in Transit', value: 'transit'},
-              {label: 'Order Ready for Pickup', value: 'pickup'}
+              {label: 'Order at MLC', value: 'MLC'},
+              {label: 'Order in Transit', value: 'Order in Transit'},
+              {label: 'Order Ready for Pickup', value: 'Order Ready for Pickup'}
           ]}
           containerStyle={{height: 40, width:'90%', marginTop: 20, marginBottom: 10}}
           // style={{backgroundColor: '#fafafa'}}
