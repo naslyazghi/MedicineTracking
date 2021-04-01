@@ -1,86 +1,105 @@
 import React, { Component, useState, useEffect } from 'react';
-import { List,   FlatList, Text, Button, TextInput, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image, AppRegistry, View, Alert } from 'react-native';
+import { ScrollView, Text, Button, TextInput, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image, AppRegistry, View, Alert } from 'react-native';
 import {searchProducts} from '../service/eachesService'
 import { SearchBar } from 'react-native-elements';
   
-export default class FlatListBasics extends Component {  
-  state = {
-    search: '',
-    arrayholder: []
-  };
 
-  updateSearch = async(search) => {
-    this.setState({ search });
-    const response = await searchProducts(search);
-    console.log(response.Content.length);
-    if(response.Content.length > 0) {
-      this.setState({response});
-      console.log(response)
-      for( var i =0; i < response.Content.length; i++) {
-        //console.log(response.Content[i].identifiers)
-       // console.log('HHHHHEEEEEBBBBBBBBEEEE')
-       //console.log(response.Content[i].identifiers)
-      }
+
+const searchEachesScreen = () => {
+  const [search, setSearch] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  
+
+  const updateSearch = async(search) => {
+    setSearch(search);
+    const res = await searchProducts(search);
+    if(res.response)
+    {
+      setSearchResult(res.Content);
     }
+  }; 
+  
 
-  };  
-    renderSeparator = () => {  
-        return (  
-            <View  
-                style={{  
-                    height: 1,  
-                    width: "100%",  
-                    backgroundColor: "#000",  
-                }}  
-            />  
-        );  
-    };  
-    //handling onPress action  
-    getListViewItem = (item) => {  
-        Alert.alert(item.key);  
-    }  
-  
-    render() {  
-      const  search  = this.state.search; 
-      const res = this.state.arrayholder;
-      console.log(search)
-      return (  
-            <View style={styles.container}> 
-              <SearchBar
-                placeholder="Type Here..."
-                onChangeText={this.updateSearch}
-                value={search}
-                lightTheme={true}
-                /> 
-                <FlatList  
-                    // data={[  
-                    //     {key: 'Android'},{key: 'iOS'}, {key: 'Java'},{key: 'Swift'},  
-                    //     {key: 'Php'},{key: 'Hadoop'},{key: 'Sap'},  
-                    //     {key: 'Python'},{key: 'Ajax'}, {key: 'C++'},  
-                    //     {key: 'Ruby'},{key: 'Rails'},{key: '.Net'},  
-                    //     {key: 'Perl'}
-                    // ]}  
-                    data = {res}
-                    renderItem={({item}) =>  
-                        <Text style={styles.item}  
-                              onPress={this.getListViewItem.bind(this, item)}>{item.key}</Text>}  
-                    ItemSeparatorComponent={this.renderSeparator}  
-                />  
-            </View>  
-        );  
-    }  
-}  
-  
+
+  return (
+    <View style={styles.container}> 
+      <SearchBar
+        placeholder="Type Here..."
+        onChangeText={val => updateSearch(val)}
+        value={search}
+        lightTheme={true}
+      /> 
+
+      <ScrollView>
+        <Text style={styles.resultHeading}>{searchResult.length + " Products found"}</Text>
+        {
+          searchResult.map(function(item, i) {
+            return  <View key={i} style={{margin: 10}}>
+                      <Text style={styles.productHeading}>{"Desired Product " + (i+1)}</Text>
+                      {item.identifiers != null ? 
+                        <View>
+                            {item.identifiers.map((ident, j) => (
+                                <View >
+                                    <Text style={styles.listItemKey} key={j}>{ident.key + ": "} 
+                                        <Text style={styles.listItemValue}>{ident.value}</Text>
+                                    </Text>
+                                </View>
+                            ))}
+                        </View>
+                        :
+                        null
+                      }
+                    </View>
+
+          })
+        }
+      </ScrollView>
+    </View>
+  );
+};
+
+
+export default searchEachesScreen;
+
+
 const styles = StyleSheet.create({  
-    container: {  
-        flex: 1,  
-    },  
-    item: {  
-        padding: 10,  
-        fontSize: 18,  
-        height: 44,  
-    },  
+  container: {  
+      flex: 1,  
+  },  
+  item: {  
+      padding: 10,  
+      fontSize: 18,  
+      height: 44,  
+  },  
+  productHeading: {
+    backgroundColor: '#74848f',
+    paddingHorizontal: 10,
+    paddingVertical: 1,
+    marginBottom: 5,
+    marginTop: 4,
+    marginHorizontal: 8,
+    color: 'white',
+    fontSize: 17,
+  },
+  resultHeading: {
+    backgroundColor: '#0094FF',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginBottom: 4,
+    marginTop: 6,
+    marginHorizontal: 8,
+    color: 'white',
+    fontSize: 17,
+  },
+  listItemKey: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#5f6b73',
+    marginLeft: 20,
+  },
+  listItemValue: {
+      fontSize: 17,
+      fontWeight: 'normal',
+      color: '#5f6b73',
+  },
 })  
-  
-  
-AppRegistry.registerComponent('searchEachesScreen', () => FlatListBasics);  
