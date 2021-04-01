@@ -29,13 +29,13 @@ const searchEachesScreen = () => {
         value={search}
         lightTheme={true}
       /> 
+      <Text style={styles.resultHeading}>{searchResult.length + " Products found"}</Text>
 
       <ScrollView>
-        <Text style={styles.resultHeading}>{searchResult.length + " Products found"}</Text>
         {
           searchResult.map(function(item, i) {
             return  <View key={i} style={{margin: 10}}>
-                      <Text style={styles.productHeading}>{"Desired Product " + (i+1)}</Text>
+                      <Text style={styles.productHeading}>{"Product " + (i+1)}</Text>
                       {item.identifiers != null ? 
                         <View>
                             {item.identifiers.map((ident, j) => (
