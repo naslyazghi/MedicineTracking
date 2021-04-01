@@ -21,6 +21,8 @@ async function search(query, limit=1, skip=0) {
           };
         });
   };
+
+
 async function searchProducts(query) {
     return axios.post(`${BASE_URL}api/product/search`, {query})
         .then( (response) => {
@@ -36,6 +38,8 @@ async function searchProducts(query) {
           };
         });
 }
+
+
 module.exports = {
     search,
     searchProducts
