@@ -42,7 +42,7 @@ export function OrdersTab({navigation}) {
           }}
         />
 
-        {/* Delivered orders tab */}
+        {/* Delivered orders tab
         <Tab.Screen
           name="Delivered Orders"
           component={DeliveredOrdersStackScreen}
@@ -53,7 +53,7 @@ export function OrdersTab({navigation}) {
               <Feather name="check-square" color={color} size={26} />
             ),
           }}
-        />
+        /> */}
 
           {/* Search Eaches tab */}
           <Tab.Screen

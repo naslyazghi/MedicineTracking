@@ -146,14 +146,14 @@ const styles = StyleSheet.create({
     padding: 5,
 },
 
-  heading: {
-    fontSize: 18,
-    marginTop: 30,
-    marginBottom: 15,
-    backgroundColor: '#74848f',
-    width: '100%',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    color: 'white',
-  }
+heading: {
+  width: '100%',
+  backgroundColor: '#0094FF',
+  paddingHorizontal: 10,
+  paddingVertical: 2,
+  marginBottom: 6,
+  marginTop: 15,
+  color: 'white',
+  fontSize: 20,
+ },
 });

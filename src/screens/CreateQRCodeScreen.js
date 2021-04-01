@@ -57,10 +57,10 @@ class QRScreen extends Component {
     return (
       <ScrollView>
       <View style={styles.container}>
-      <Text style={styles.heading}>Add Info for QR Code</Text>
-
+      {/* <Text style={styles.heading}>Add Info for QR Code</Text> */}
+      <Text style={styles.heading}>QR Code Generator</Text>
         <View style={styles.action}>
-
+{/* 
           <DropDownPicker
               items={[
                   {label: 'Order in Transit', value: 'order'},
@@ -76,16 +76,16 @@ class QRScreen extends Component {
               onChangeItem={item => this.setState({
                   type: item.value,
               })}
-          />
+          /> */}
           <TextInput
             style={styles.input}
-            placeholder = "Insert Order Number or Product NDC"
+            placeholder = "Insert Order Number"
             onChangeText={(num) => this.setState({num: num})}
             value={this.state.num}
           />
         </View>
-
-        <Text style={styles.heading}>Generated QR Code</Text>
+{/* 
+        <Text style={styles.heading}>Generated QR Code</Text> */}
         <QRCode
           value = {JSON.stringify({type: this.state.type, num: this.state.num})}
           size={200}
@@ -108,31 +108,58 @@ class QRScreen extends Component {
 }
  
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: 'white',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+  
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingBottom: 30,
+  },
+
+  textInput: {
+    fontSize: 16,
+    flex: 1,
+    marginTop: 0,
+    paddingLeft: 10,
+    color: '#000000',
+  },
+
+  heading: {
+    width: '100%',
+    backgroundColor: '#0094FF',
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    marginBottom: 6,
+    marginTop: 15,
+    color: 'white',
+    fontSize: 20,
+   },
+// container: {
+//         backgroundColor: 'white',
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//     },
  
     input: {
         flex: 0,
         borderColor: 'gray',
         borderWidth: 1,
-        margin: 10,
+        margin: 40,
         borderRadius: 5,
         padding: 5,
+        paddingRight: 70,
     },
 
-    heading: {
-      fontSize: 18,
-      marginTop: 30,
-      marginBottom: 5,
-      backgroundColor: '#74848f',
-      width: '100%',
-      paddingHorizontal: 10,
-      paddingVertical: 4,
-      color: 'white',
-    }
+//     heading: {
+//       fontSize: 18,
+//       marginTop: 5,
+//       marginBottom: 5,
+//       backgroundColor: '#74848f',
+//       width: '100%',
+//       paddingHorizontal: 10,
+//       paddingVertical: 4,
+//       color: 'white',
+//     }
 });
 
 AppRegistry.registerComponent('QRScreen', () => QRScreen);

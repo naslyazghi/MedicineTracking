@@ -96,7 +96,7 @@ export function DrawerContent(props) {
             />
 
             {/* 2 - Inventory tab */}
-            <DrawerItem
+            {/* <DrawerItem
             style = {styles.drawerItem}
             overlaycolor
               icon={({color, size}) => (
@@ -107,7 +107,7 @@ export function DrawerContent(props) {
               onPress={() => {
                 props.navigation.navigate('InventoryTab');
               }}
-            />
+            /> */}
 
             {/* 6 - QR Code */}
             <DrawerItem
@@ -121,9 +121,6 @@ export function DrawerContent(props) {
                 props.navigation.navigate('QRTab');
               }}
             />
-
-            </Drawer.Section>
-          
             {/* 3 - Invitation Code tab */}
             <DrawerItem
               style = {styles.drawerItem}
@@ -136,9 +133,13 @@ export function DrawerContent(props) {
                 props.navigation.navigate('InvitationCode');
               }}
             />
+            
+            </Drawer.Section>
+          
+
 
             {/* 4 - Settings tab */}
-            <DrawerItem
+            {/* <DrawerItem
             style = {styles.drawerItem}
               icon={({color, size}) => (
                 <Feather name="settings" color={'#0094FF'} size={30} />
@@ -148,10 +149,10 @@ export function DrawerContent(props) {
               onPress={() => {
                 props.navigation.navigate('Settings');
               }}
-            />
+            /> */}
 
             {/* 5 - About tab */}
-            <DrawerItem
+            {/* <DrawerItem
             style = {styles.drawerItem}
               icon={({color, size}) => (
                 <Feather name="code" color={'#0094FF'} size={30} />
@@ -162,10 +163,10 @@ export function DrawerContent(props) {
                 props.navigation.navigate('About');
               }}
             />
-            
+             */}
 
           {/* Second section of the drawer items, Preferences  */}
-          <Drawer.Section title="Preferences" >
+          {/* <Drawer.Section title="Preferences" >
             <TouchableRipple
             style = {styles.drawerItem}
               onPress={() => {
@@ -178,7 +179,7 @@ export function DrawerContent(props) {
                 </View>
               </View>
             </TouchableRipple>
-          </Drawer.Section>
+          </Drawer.Section> */}
         </View>
       </DrawerContentScrollView>
 

@@ -172,13 +172,13 @@ const LoginScreen = ({navigation}) => {
                 };
                 
                 // Show an alert box
-                Alert.alert(
-                    'Medicine Tracking',
-                    'Login Successful\nid: ' +
-                    user.id +
-                    '\nname: ' +
-                    user.name
-                );
+                // Alert.alert(
+                //     'Medicine Tracking',
+                //     'Login Successful\nid: ' +
+                //     user.id +
+                //     '\nname: ' +
+                //     user.name
+                // );
 
                 // lOGIN the user
                 logIn(user);

@@ -39,7 +39,7 @@ export function QRTab({navigation}) {
           }}
         />
           {/* Scan Bar Code tab (For product) */}
-          <Tab.Screen
+          {/* <Tab.Screen
           name="Inventory Management"
           component={ProductScanQRCodeStackScreen}
           //initialParams={{token: token}}
@@ -49,7 +49,7 @@ export function QRTab({navigation}) {
               <Feather name="shopping-cart" color={color} size={26}/>
             ),
           }}
-        />
+        /> */}
           
 
 
