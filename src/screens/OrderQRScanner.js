@@ -80,19 +80,14 @@ export default function App({navigation}) {
   }
 
   return (
-    <View style={styles.container}>
-      <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={styles.cameraScanner}
-       // style={StyleSheet.absoluteFillObject}
-      />   
+    <View style={styles.container}> 
       <DropDownPicker
           items={[
               {label: 'Order at MLC', value: 'mlc'},
               {label: 'Order in Transit', value: 'transit'},
               {label: 'Order Ready for Pickup', value: 'pickup'}
           ]}
-          containerStyle={{height: 40, width:'90%', marginVertical: 10,}}
+          containerStyle={{height: 40, width:'90%', marginTop: 20, marginBottom: 10}}
           // style={{backgroundColor: '#fafafa'}}
           // itemStyle={{
           //     justifyContent: 'flex-start'
@@ -111,6 +106,13 @@ export default function App({navigation}) {
           value={message}
         />
       </View>  
+
+      <BarCodeScanner
+        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        style={styles.cameraScanner}
+       // style={StyleSheet.absoluteFillObject}
+      />  
+
       <Button 
         title={'Tap to Scan'} 
         onPress={() => setScanned(false)} 
@@ -143,9 +145,9 @@ const styles = StyleSheet.create({
     width: '90%',
     flexDirection: 'row',
     marginTop: 5,
-    marginBottom: 12,
+    marginBottom: 10,
     paddingHorizontal: 10,
-    paddingVertical: 11,
+    paddingVertical: 9,
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#868686',
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
   },
 
   textInput: {
-    fontSize: 16,
+    fontSize: 15,
     flex: 1,
     marginTop: 0,
     paddingLeft: 10,
