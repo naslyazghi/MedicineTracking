@@ -78,7 +78,7 @@ class QRScreen extends Component {
               })}
           /> */}
           <TextInput
-            style={styles.input}
+            style={styles.textInput}
             placeholder = "Insert Order Number"
             onChangeText={(num) => this.setState({num: num})}
             value={this.state.num}
@@ -116,6 +116,20 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
 
+  action: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '95%',
+    flexDirection: 'row',
+    marginVertical: 30,
+    paddingHorizontal: 10,
+    paddingVertical: 11,
+    borderWidth: 1,
+    borderRadius: 7,
+    borderColor: '#868686',
+    backgroundColor: '#FFFFFF',
+  },
+
   textInput: {
     fontSize: 16,
     flex: 1,
@@ -141,13 +155,11 @@ const styles = StyleSheet.create({
 //     },
  
     input: {
-        flex: 0,
+        width:'100%',
         borderColor: 'gray',
         borderWidth: 1,
-        margin: 40,
+        marginVertical: 40,
         borderRadius: 5,
-        padding: 5,
-        paddingRight: 70,
     },
 
 //     heading: {

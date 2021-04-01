@@ -67,15 +67,19 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                 {items.map(function(item, i) {
                     return <View style={styles.listItemValue} key={i}>
                                 <Text style={styles.productHeading}>{"Product " + (i+1)}</Text>
-                                <View>
-                                    {item.product.identifiers.map((prod, j) => (
-                                        <View >
-                                            <Text style={styles.listItemKey} key={j}>{prod.key + ": "} 
-                                                <Text style={styles.listItemValue}>{prod.value}</Text>
-                                            </Text>
-                                        </View>
-                                    ))}
-                                </View>
+                                {item.product != undefined ? 
+                                    <View>
+                                        {item.product.identifiers.map((prod, j) => (
+                                            <View >
+                                                <Text style={styles.listItemKey} key={j}>{prod.key + ": "} 
+                                                    <Text style={styles.listItemValue}>{prod.value}</Text>
+                                                </Text>
+                                            </View>
+                                        ))}
+                                    </View>
+                                    :
+                                    null
+                                }
                                 <Text style={styles.listItemKey}>{"Quantity: " + item.quantity}</Text>
                             </View>
                 })}
@@ -84,7 +88,7 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                 {items.map(function(item, i) {
                     return <View style={styles.listItemValue} key={i}>
                                 <Text style={styles.productHeading}>{"Desired Product " + (i+1)}</Text>
-                                {item.desired.identifiers != null ? 
+                                {item.desired != undefined ? 
                                     <View>
                                         {item.desired.identifiers.map((prod, j) => (
                                             <View >
