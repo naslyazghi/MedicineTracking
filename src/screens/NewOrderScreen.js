@@ -250,8 +250,8 @@ class NewOrderScreen extends Component {
           <Text style={styles.productHeading}>{"Product " + (i+1)}</Text>
           <View>
               {item.desired.identifiers.map((prod, j) => (
-                  <View >
-                      <Text style={styles.listItemKey} key={j}>
+                  <View key={j}>
+                      <Text style={styles.listItemKey}>
                           {prod.key + ": "} 
                           <Text style={styles.listItemValue}>{prod.value}</Text>
                       </Text>

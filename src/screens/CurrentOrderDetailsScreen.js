@@ -94,8 +94,8 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                                 {item.desired != undefined ? 
                                     <View>
                                         {item.desired.identifiers.map((prod, j) => (
-                                            <View >
-                                                <Text style={styles.listItemKey} key={j}>{prod.key + ": "} 
+                                            <View key={j}>
+                                                <Text style={styles.listItemKey}>{prod.key + ": "} 
                                                     <Text style={styles.listItemValue}>{prod.value}</Text>
                                                 </Text>
                                             </View>

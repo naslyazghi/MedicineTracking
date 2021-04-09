@@ -22,7 +22,7 @@ const searchEachesScreen = () => {
 
   const eaches = (item, level) => {
     return (
-      <View style={{marginLeft:15}}>
+      <View style={{marginLeft:15}} key={level}>
         <Text style={[styles.eachesHeading, {backgroundColor: 'hsl(' + (206+level*0) + ',' + (12+level*0) + '%,'  + (45+level*10) + '%)'}]}>Eaches Level {level} Contains</Text>
         <View>
           <Text style={styles.listItemKey}>Quantity: 
@@ -68,8 +68,8 @@ const searchEachesScreen = () => {
                         <View>
                             <Text style={styles.productDetails}>Identifiers</Text>
                             {item.identifiers.map((ident, j) => (
-                                <View >
-                                    <Text style={styles.listItemKey} key={j}>{ident.key + ": "} 
+                                <View key={j}>
+                                    <Text style={styles.listItemKey}>{ident.key + ": "} 
                                         <Text style={styles.listItemValue}>{ident.value}</Text>
                                     </Text>
                                 </View>
