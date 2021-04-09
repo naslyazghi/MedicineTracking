@@ -16,6 +16,33 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
     const backgroundColor = helperFunctions.getColor(order?.status);
     console.log("User = " + order.user);
 
+    // Display the eaches for the product
+    const eaches = (item, level) => {
+        return (
+            <View style={{marginLeft:15}} key={level}>
+            <Text style={[styles.eachesHeading, {backgroundColor: 'hsl(' + (206+level*0) + ',' + (12+level*0) + '%,'  + (45+level*10) + '%)'}]}>Eaches Level {level} Contains</Text>
+            <View>
+                <Text style={styles.listItemKey}>Quantity: 
+                    <Text style={styles.listItemValue}> {item.quantity}</Text>
+                </Text>
+                <Text style={styles.listItemKey}>Unit: 
+                    <Text style={styles.listItemValue}> {item.unit}</Text>
+                </Text>
+            </View>
+
+            {item.contains != null ? 
+                <View>
+                {item.contains.map((subItem, j) => (
+                    eaches(subItem, level+1)
+                ))}
+                </View>
+                :
+                null
+            }
+            </View>
+        );
+    };
+
     return (
         <View style={styles.container}>
             <View style={[styles.actionBar, {backgroundColor: backgroundColor}]}>
@@ -33,7 +60,7 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
             </View>
             
             <ScrollView style={styles.container_text}>
-                <Text style={styles.orderDetailsHeading}>Order Summary</Text>
+                <Text style={[styles.orderDetailsHeading, {backgroundColor: backgroundColor}]}>Order Summary</Text>
                 <Text style={styles.orderNumber}>{"Order #:  "}
                     <Text style={styles.orderNumber}>{order.orderNumber}</Text>
                 </Text>
@@ -66,33 +93,51 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                     </Text>
                 </Text>
 
-                <Text style={styles.orderDetailsHeading}>Products</Text>
+                <Text style={[styles.orderDetailsHeading, {backgroundColor: backgroundColor}]}>Products</Text>
                 {items.map(function(item, i) {
                     return <View style={styles.listItemValue} key={i}>
-                                <Text style={styles.productHeading}>{"Product " + (i+1)}</Text>
                                 {item.product != undefined ? 
                                     <View>
-                                        {item.product.identifiers.map((prod, j) => (
-                                            <View >
-                                                <Text style={styles.listItemKey} key={j}>{prod.key + ": "} 
-                                                    <Text style={styles.listItemValue}>{prod.value}</Text>
-                                                </Text>
+                                        <Text style={styles.productHeading}>{"Product " + (i+1)}</Text>
+                                        <Text style={styles.productDetails}>Identifiers</Text>
+                                        {item.product.identifiers != undefined ? 
+                                            <View>
+                                                {item.product.identifiers.map((prod, j) => (
+                                                    <View key={j}>
+                                                        <Text style={styles.listItemKey}>{prod.key + ": "} 
+                                                            <Text style={styles.listItemValue}>{prod.value}</Text>
+                                                        </Text>
+                                                    </View>
+                                                ))}
                                             </View>
-                                        ))}
+                                            :
+                                            null
+                                        }
+                                        {item.quantity != undefined ?
+                                            <Text style={styles.listItemKey}>{"Quantity: " +  item.quantity}</Text>
+                                            :
+                                            null
+                                        }
+                                        <Text style={styles.productDetails}>Eaches</Text>
+                                        {item.product.eaches != undefined ? 
+                                            eaches(item.product.eaches, 1)
+                                            :
+                                            null
+                                        }
                                     </View>
                                     :
                                     null
                                 }
-                                <Text style={styles.listItemKey}>{"Quantity: " + item.quantity}</Text>
                             </View>
                 })}
 
-                <Text style={styles.orderDetailsHeading}>Desired Products</Text>
+                <Text style={[styles.orderDetailsHeading, {backgroundColor: backgroundColor}]}>Desired Products</Text>
                 {items.map(function(item, i) {
                     return <View style={styles.listItemValue} key={i}>
                                 <Text style={styles.productHeading}>{"Desired Product " + (i+1)}</Text>
                                 {item.desired != undefined ? 
                                     <View>
+                                        <Text style={styles.productDetails}>Identifiers</Text>
                                         {item.desired.identifiers.map((prod, j) => (
                                             <View key={j}>
                                                 <Text style={styles.listItemKey}>{prod.key + ": "} 
@@ -104,11 +149,21 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                                     :
                                     null
                                 }
-                                <Text style={styles.listItemKey}>{"Desired Quantity: " + item.quantity}</Text>
+                                {item.quantity != undefined ?
+                                    <Text style={styles.listItemKey}>{"Desired Quantity: " + item.quantity}</Text>
+                                    :
+                                    null
+                                }
+                                <Text style={styles.productDetails}>Eaches</Text>
+                                {item.desired.eaches != undefined ? 
+                                    eaches(item.desired.eaches, 1)
+                                    :
+                                    null
+                                }
                             </View>
                 })}
 
-                <Text style={styles.orderDetailsHeading}>Log & Activity</Text>
+                <Text style={[styles.orderDetailsHeading, {backgroundColor: backgroundColor}]}>Log & Activity</Text>
                 {logs.map(function(log, i) {
                     return <View style={styles.listItemValue} key={i}>
                                 <Text style={styles.productHeading}>{Moment(log.date).format("dddd, MMMM Do YYYY")}</Text>
@@ -177,7 +232,6 @@ const styles = StyleSheet.create({
     },
 
     orderDetailsHeading: {
-        backgroundColor: '#5f6b73',
         paddingHorizontal: 10,
         paddingVertical: 2,
         marginBottom: 6,
@@ -188,27 +242,49 @@ const styles = StyleSheet.create({
     },
 
     productHeading: {
-        backgroundColor: '#99aab5',
+        backgroundColor: 'rgb(79, 92, 99)',
         paddingHorizontal: 10,
         paddingVertical: 1,
         marginBottom: 5,
-        marginTop: 6,
-        marginHorizontal: 8,
+        marginTop: 20,
+        marginHorizontal: 0,
         color: 'white',
         fontSize: 17,
     },
 
+    productDetails: {
+        backgroundColor: 'rgb(102, 119, 127)', //rgb(128, 145, 153)
+        paddingHorizontal: 10,
+        paddingVertical: 0,
+        marginBottom: 1,
+        marginTop: 6,
+        marginHorizontal: 18,
+        color: 'white',
+        fontSize: 18,
+    },
+
+    eachesHeading: {
+        backgroundColor: '#aab5bb',
+        paddingHorizontal: 10,
+        paddingVertical: 0,
+        marginBottom: 1,
+        marginTop: 5,
+        marginHorizontal: 18,
+        color: 'white',
+        fontSize: 16,
+    },
+
     listItemKey: {
-        fontSize: 17,
+        fontSize: 16,
         fontWeight: 'bold',
         color: '#5f6b73',
-        marginLeft: 20,
-    },
-    listItemValue: {
-        fontSize: 17,
-        fontWeight: 'normal',
-        color: '#5f6b73',
-    },
+        marginLeft: 28,
+      },
+      listItemValue: {
+          fontSize: 16,
+          fontWeight: 'normal',
+          color: '#5f6b73',
+      },
 
     logMessage: {
         fontSize: 17,
