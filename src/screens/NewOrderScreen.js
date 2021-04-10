@@ -123,6 +123,7 @@ class NewOrderScreen extends Component {
     this.setState({isDesiredOrderSectionVisible: !this.state.isDesiredOrderSectionVisible})
     // setIsDesiredOrderSectionVisible(!this.state.isDesiredOrderSectionVisible)
   }
+  
   showAddNewProductDialog () {
     console.log("show add new product dialog");
     // setIsAddNewProductDialogVisible(true);

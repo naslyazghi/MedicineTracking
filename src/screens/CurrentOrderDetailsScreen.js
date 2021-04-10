@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Component, useState, useEffect }  from 'react';
 import { ScrollView, View, Text, TextInput, Button, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image, Alert } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import Dialog from "react-native-dialog";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as Animatable from 'react-native-animatable';
 import {FilledButton} from '../components/FilledButton';
@@ -15,6 +16,8 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
     const logs = order.log;
     const backgroundColor = helperFunctions.getColor(order?.status);
     console.log("User = " + order.user);
+    const [isConfirmEachesDialogVisible, setIsConfirmEachesDialogVisible] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState({});
 
     // Display the eaches for the product
     const eaches = (item, level) => {
@@ -42,6 +45,42 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
             </View>
         );
     };
+
+    const showEachesConfirmationDialog = (product) => {
+        setIsConfirmEachesDialogVisible(true);
+        setSelectedProduct(product);
+    };
+
+    const handleCancel = () => {
+        setIsConfirmEachesDialogVisible(false);
+    };
+
+
+    // const confirmEaches = (item, level) => {
+    //     return (
+    //         <View style={{marginLeft:15}} key={level}>
+    //         <Text style={[styles.eachesHeading, {backgroundColor: 'hsl(' + (206+level*0) + ',' + (12+level*0) + '%,'  + (45+level*10) + '%)'}]}>Eaches Level {level} Contains</Text>
+    //         <View>
+    //             <Text style={styles.listItemKey}>Quantity: 
+    //                 <Text style={styles.listItemValue}> {item.quantity}</Text>
+    //             </Text>
+    //             <Text style={styles.listItemKey}>Unit: 
+    //                 <Text style={styles.listItemValue}> {item.unit}</Text>
+    //             </Text>
+    //         </View>
+
+    //         {item.contains != null ? 
+    //             <View>
+    //             {item.contains.map((subItem, j) => (
+    //                 eaches(subItem, level+1)
+    //             ))}
+    //             </View>
+    //             :
+    //             null
+    //         }
+    //         </View>
+    //     );
+    // };
 
     return (
         <View style={styles.container}>
@@ -113,12 +152,40 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                                             :
                                             null
                                         }
+
                                         {item.quantity != undefined ?
                                             <Text style={styles.listItemKey}>{"Quantity: " +  item.quantity}</Text>
                                             :
                                             null
                                         }
-                                        <Text style={styles.productDetails}>Eaches</Text>
+
+                                        <TouchableOpacity style={styles.eachesSection}  onPress={() => {showEachesConfirmationDialog(item.product)}}>
+                                            <Text style={styles.eachesHeading}>Eaches</Text>
+                                            <View style={styles.eachesIcon}>
+                                                <Feather
+                                                    name={'check-circle'}
+                                                    color="white"
+                                                    size={21}
+                                                /> 
+                                            </View>
+                                        </TouchableOpacity>
+
+                                        <Dialog.Container visible={isConfirmEachesDialogVisible}>
+                                            <Dialog.Title>Confirm Eaches</Dialog.Title>
+                                            <Dialog.Description>
+                                                Are the eaches correct?
+                                            </Dialog.Description>
+                                            {/* <Dialog.Input placeholder={'key'} onChangeText={val => this.newIdentifierKeyInputChange(val)}/>
+                                            <Dialog.Input placeholder={'Value'} onChangeText={val => this.newIdentifierValueInputChange(val)}/> */}
+                                            <Dialog.Button label="Cancel" onPress={handleCancel}/>
+                                            <Dialog.Button label="Yes" 
+                                                onPress={() => {
+                                                    // this.handleAddIdentifier()
+                                                }}
+                                            />
+                                            <Dialog.Button label="Edit" />
+                                        </Dialog.Container>
+
                                         {item.product.eaches != undefined ? 
                                             eaches(item.product.eaches, 1)
                                             :
@@ -150,7 +217,9 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                                     null
                                 }
                                 {item.quantity != undefined ?
-                                    <Text style={styles.listItemKey}>{"Desired Quantity: " + item.quantity}</Text>
+                                    <Text style={styles.listItemKey}>{"Desired Quantity: "} 
+                                        <Text style={styles.listItemValue}>{item.quantity}</Text>
+                                    </Text>
                                     :
                                     null
                                 }
@@ -253,7 +322,7 @@ const styles = StyleSheet.create({
     },
 
     productDetails: {
-        backgroundColor: 'rgb(102, 119, 127)', //rgb(128, 145, 153)
+        backgroundColor: 'rgb(102, 119, 127)',
         paddingHorizontal: 10,
         paddingVertical: 0,
         marginBottom: 1,
@@ -263,15 +332,28 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
 
-    eachesHeading: {
-        backgroundColor: '#aab5bb',
-        paddingHorizontal: 10,
-        paddingVertical: 0,
+    eachesSection: {
+        display: 'flex',
+        flexDirection: 'row',
+        backgroundColor: 'rgb(102, 119, 127)',
         marginBottom: 1,
-        marginTop: 5,
+        marginTop: 6,
         marginHorizontal: 18,
         color: 'white',
-        fontSize: 16,
+        fontSize: 18,
+    },
+
+    eachesHeading: {
+        backgroundColor: 'rgb(102, 119, 127)',
+        paddingHorizontal: 10,
+        color: 'white',
+        fontSize: 18,
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+    },
+
+    eachesIcon: {
+        // alignItems: 'flex-end',
     },
 
     listItemKey: {
@@ -279,12 +361,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#5f6b73',
         marginLeft: 28,
-      },
-      listItemValue: {
-          fontSize: 16,
-          fontWeight: 'normal',
-          color: '#5f6b73',
-      },
+    },
+    
+    listItemValue: {
+        fontSize: 16,
+        fontWeight: 'normal',
+        color: '#5f6b73',
+    },
 
     logMessage: {
         fontSize: 17,
