@@ -163,9 +163,11 @@ const styles = StyleSheet.create({
   },
 
   cameraScanner: {
+    width: 400,
+    height: 400,
     flex: 0,
     borderColor: 'gray',
-    borderWidth: 200,
+    borderWidth: 0,
     margin: 10,
     borderRadius: 5,
     padding: 5,

@@ -58,7 +58,6 @@ class QRScreen extends Component {
       <ScrollView>
       <View style={styles.container}>
       {/* <Text style={styles.heading}>Add Info for QR Code</Text> */}
-      <Text style={styles.heading}>QR Code Generator</Text>
         <View style={styles.action}>
 {/* 
           <DropDownPicker

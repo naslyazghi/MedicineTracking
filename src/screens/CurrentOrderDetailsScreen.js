@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Component, useState, useEffect }  from 'react';
 import { ScrollView, View, Text, TextInput, Button, TouchableOpacity, Dimensions, StyleSheet, StatusBar, Image, Alert } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import Dialog from "react-native-dialog";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as Animatable from 'react-native-animatable';
 import {FilledButton} from '../components/FilledButton';
@@ -15,6 +16,71 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
     const logs = order.log;
     const backgroundColor = helperFunctions.getColor(order?.status);
     console.log("User = " + order.user);
+    const [isConfirmEachesDialogVisible, setIsConfirmEachesDialogVisible] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState({});
+
+    // Display the eaches for the product
+    const eaches = (item, level) => {
+        return (
+            <View style={{marginLeft:15}} key={level}>
+            <Text style={[styles.eachesHeading, {backgroundColor: 'hsl(' + (206+level*0) + ',' + (12+level*0) + '%,'  + (45+level*10) + '%)'}]}>Eaches Level {level} Contains</Text>
+            <View>
+                <Text style={styles.listItemKey}>Quantity: 
+                    <Text style={styles.listItemValue}> {item.quantity}</Text>
+                </Text>
+                <Text style={styles.listItemKey}>Unit: 
+                    <Text style={styles.listItemValue}> {item.unit}</Text>
+                </Text>
+            </View>
+
+            {item.contains != null ? 
+                <View>
+                {item.contains.map((subItem, j) => (
+                    eaches(subItem, level+1)
+                ))}
+                </View>
+                :
+                null
+            }
+            </View>
+        );
+    };
+
+    const showEachesConfirmationDialog = (product) => {
+        setIsConfirmEachesDialogVisible(true);
+        setSelectedProduct(product);
+    };
+
+    const handleCancel = () => {
+        setIsConfirmEachesDialogVisible(false);
+    };
+
+
+    // const confirmEaches = (item, level) => {
+    //     return (
+    //         <View style={{marginLeft:15}} key={level}>
+    //         <Text style={[styles.eachesHeading, {backgroundColor: 'hsl(' + (206+level*0) + ',' + (12+level*0) + '%,'  + (45+level*10) + '%)'}]}>Eaches Level {level} Contains</Text>
+    //         <View>
+    //             <Text style={styles.listItemKey}>Quantity: 
+    //                 <Text style={styles.listItemValue}> {item.quantity}</Text>
+    //             </Text>
+    //             <Text style={styles.listItemKey}>Unit: 
+    //                 <Text style={styles.listItemValue}> {item.unit}</Text>
+    //             </Text>
+    //         </View>
+
+    //         {item.contains != null ? 
+    //             <View>
+    //             {item.contains.map((subItem, j) => (
+    //                 eaches(subItem, level+1)
+    //             ))}
+    //             </View>
+    //             :
+    //             null
+    //         }
+    //         </View>
+    //     );
+    // };
 
     return (
         <View style={styles.container}>
@@ -33,7 +99,7 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
             </View>
             
             <ScrollView style={styles.container_text}>
-                <Text style={styles.orderDetailsHeading}>Order Summary</Text>
+                <Text style={[styles.orderDetailsHeading, {backgroundColor: backgroundColor}]}>Order Summary</Text>
                 <Text style={styles.orderNumber}>{"Order #:  "}
                     <Text style={styles.orderNumber}>{order.orderNumber}</Text>
                 </Text>
@@ -66,36 +132,82 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                     </Text>
                 </Text>
 
-                <Text style={styles.orderDetailsHeading}>Products</Text>
+                <Text style={[styles.orderDetailsHeading, {backgroundColor: backgroundColor}]}>Products</Text>
                 {items.map(function(item, i) {
                     return <View style={styles.listItemValue} key={i}>
-                                <Text style={styles.productHeading}>{"Product " + (i+1)}</Text>
                                 {item.product != undefined ? 
                                     <View>
-                                        {item.product.identifiers.map((prod, j) => (
-                                            <View >
-                                                <Text style={styles.listItemKey} key={j}>{prod.key + ": "} 
-                                                    <Text style={styles.listItemValue}>{prod.value}</Text>
-                                                </Text>
+                                        <Text style={styles.productHeading}>{"Product " + (i+1)}</Text>
+                                        <Text style={styles.productDetails}>Identifiers</Text>
+                                        {item.product.identifiers != undefined ? 
+                                            <View>
+                                                {item.product.identifiers.map((prod, j) => (
+                                                    <View key={j}>
+                                                        <Text style={styles.listItemKey}>{prod.key + ": "} 
+                                                            <Text style={styles.listItemValue}>{prod.value}</Text>
+                                                        </Text>
+                                                    </View>
+                                                ))}
                                             </View>
-                                        ))}
+                                            :
+                                            null
+                                        }
+
+                                        {item.quantity != undefined ?
+                                            <Text style={styles.listItemKey}>{"Quantity: " +  item.quantity}</Text>
+                                            :
+                                            null
+                                        }
+
+                                        <TouchableOpacity style={styles.eachesSection}  onPress={() => {showEachesConfirmationDialog(item.product)}}>
+                                            <Text style={styles.eachesHeading}>Eaches</Text>
+                                            <View style={styles.eachesIcon}>
+                                                <Feather
+                                                    name={'check-circle'}
+                                                    color="white"
+                                                    size={21}
+                                                /> 
+                                            </View>
+                                        </TouchableOpacity>
+
+                                        <Dialog.Container visible={isConfirmEachesDialogVisible}>
+                                            <Dialog.Title>Confirm Eaches</Dialog.Title>
+                                            <Dialog.Description>
+                                                Are the eaches correct?
+                                            </Dialog.Description>
+                                            {/* <Dialog.Input placeholder={'key'} onChangeText={val => this.newIdentifierKeyInputChange(val)}/>
+                                            <Dialog.Input placeholder={'Value'} onChangeText={val => this.newIdentifierValueInputChange(val)}/> */}
+                                            <Dialog.Button label="Cancel" onPress={handleCancel}/>
+                                            <Dialog.Button label="Yes" 
+                                                onPress={() => {
+                                                    // this.handleAddIdentifier()
+                                                }}
+                                            />
+                                            <Dialog.Button label="Edit" />
+                                        </Dialog.Container>
+
+                                        {item.product.eaches != undefined ? 
+                                            eaches(item.product.eaches, 1)
+                                            :
+                                            null
+                                        }
                                     </View>
                                     :
                                     null
                                 }
-                                <Text style={styles.listItemKey}>{"Quantity: " + item.quantity}</Text>
                             </View>
                 })}
 
-                <Text style={styles.orderDetailsHeading}>Desired Products</Text>
+                <Text style={[styles.orderDetailsHeading, {backgroundColor: backgroundColor}]}>Desired Products</Text>
                 {items.map(function(item, i) {
                     return <View style={styles.listItemValue} key={i}>
                                 <Text style={styles.productHeading}>{"Desired Product " + (i+1)}</Text>
                                 {item.desired != undefined ? 
                                     <View>
+                                        <Text style={styles.productDetails}>Identifiers</Text>
                                         {item.desired.identifiers.map((prod, j) => (
-                                            <View >
-                                                <Text style={styles.listItemKey} key={j}>{prod.key + ": "} 
+                                            <View key={j}>
+                                                <Text style={styles.listItemKey}>{prod.key + ": "} 
                                                     <Text style={styles.listItemValue}>{prod.value}</Text>
                                                 </Text>
                                             </View>
@@ -104,11 +216,23 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                                     :
                                     null
                                 }
-                                <Text style={styles.listItemKey}>{"Desired Quantity: " + item.quantity}</Text>
+                                {item.quantity != undefined ?
+                                    <Text style={styles.listItemKey}>{"Desired Quantity: "} 
+                                        <Text style={styles.listItemValue}>{item.quantity}</Text>
+                                    </Text>
+                                    :
+                                    null
+                                }
+                                <Text style={styles.productDetails}>Eaches</Text>
+                                {item.desired.eaches != undefined ? 
+                                    eaches(item.desired.eaches, 1)
+                                    :
+                                    null
+                                }
                             </View>
                 })}
 
-                <Text style={styles.orderDetailsHeading}>Log & Activity</Text>
+                <Text style={[styles.orderDetailsHeading, {backgroundColor: backgroundColor}]}>Log & Activity</Text>
                 {logs.map(function(log, i) {
                     return <View style={styles.listItemValue} key={i}>
                                 <Text style={styles.productHeading}>{Moment(log.date).format("dddd, MMMM Do YYYY")}</Text>
@@ -177,7 +301,6 @@ const styles = StyleSheet.create({
     },
 
     orderDetailsHeading: {
-        backgroundColor: '#5f6b73',
         paddingHorizontal: 10,
         paddingVertical: 2,
         marginBottom: 6,
@@ -188,24 +311,60 @@ const styles = StyleSheet.create({
     },
 
     productHeading: {
-        backgroundColor: '#99aab5',
+        backgroundColor: 'rgb(79, 92, 99)',
         paddingHorizontal: 10,
         paddingVertical: 1,
         marginBottom: 5,
-        marginTop: 6,
-        marginHorizontal: 8,
+        marginTop: 20,
+        marginHorizontal: 0,
         color: 'white',
         fontSize: 17,
     },
 
+    productDetails: {
+        backgroundColor: 'rgb(102, 119, 127)',
+        paddingHorizontal: 10,
+        paddingVertical: 0,
+        marginBottom: 1,
+        marginTop: 6,
+        marginHorizontal: 18,
+        color: 'white',
+        fontSize: 18,
+    },
+
+    eachesSection: {
+        display: 'flex',
+        flexDirection: 'row',
+        backgroundColor: 'rgb(102, 119, 127)',
+        marginBottom: 1,
+        marginTop: 6,
+        marginHorizontal: 18,
+        color: 'white',
+        fontSize: 18,
+    },
+
+    eachesHeading: {
+        backgroundColor: 'rgb(102, 119, 127)',
+        paddingHorizontal: 10,
+        color: 'white',
+        fontSize: 18,
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+    },
+
+    eachesIcon: {
+        // alignItems: 'flex-end',
+    },
+
     listItemKey: {
-        fontSize: 17,
+        fontSize: 16,
         fontWeight: 'bold',
         color: '#5f6b73',
-        marginLeft: 20,
+        marginLeft: 28,
     },
+    
     listItemValue: {
-        fontSize: 17,
+        fontSize: 16,
         fontWeight: 'normal',
         color: '#5f6b73',
     },

@@ -123,6 +123,7 @@ class NewOrderScreen extends Component {
     this.setState({isDesiredOrderSectionVisible: !this.state.isDesiredOrderSectionVisible})
     // setIsDesiredOrderSectionVisible(!this.state.isDesiredOrderSectionVisible)
   }
+  
   showAddNewProductDialog () {
     console.log("show add new product dialog");
     // setIsAddNewProductDialogVisible(true);
@@ -250,8 +251,8 @@ class NewOrderScreen extends Component {
           <Text style={styles.productHeading}>{"Product " + (i+1)}</Text>
           <View>
               {item.desired.identifiers.map((prod, j) => (
-                  <View >
-                      <Text style={styles.listItemKey} key={j}>
+                  <View key={j}>
+                      <Text style={styles.listItemKey}>
                           {prod.key + ": "} 
                           <Text style={styles.listItemValue}>{prod.value}</Text>
                       </Text>
