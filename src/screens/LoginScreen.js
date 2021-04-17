@@ -146,7 +146,8 @@ const LoginScreen = ({navigation}) => {
             // User found
             else {
                 console.log("response succeeded");
-                var tokenResponse = res.Content;
+                console.log(res)
+                var tokenResponse = res.content;
                 console.log("tokenResponse = " , tokenResponse);
                 // Decode the token
                 try{

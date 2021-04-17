@@ -90,11 +90,11 @@ const helpers = {
         else 
         {
             console.log("{refreshToken} => Token refreshed");
-            global.userTokenConst = res.Content;
+            global.userTokenConst = res.content;
             // Update Local storage
-            // await AsyncStorage.mergeItem('userToken', res.Content);
-            console.log("{refreshToken} => New Token = " + JSON.stringify(res.Content));
-            return res.Content;
+            // await AsyncStorage.mergeItem('userToken', res.content);
+            console.log("{refreshToken} => New Token = " + JSON.stringify(res.content));
+            return res.content;
         }
     },
 

@@ -105,10 +105,10 @@ class NewOrderScreen extends Component {
     else 
     {
       // console.log("{New Order Screen} => Path response message = " + JSON.stringify(res.response));
-      console.log("{New Order Screen} => Path response content = " + JSON.stringify(res.Content));
+      console.log("{New Order Screen} => Path response content = " + JSON.stringify(res.content));
       var userToken = await AsyncStorage.getItem('userToken');
       console.log("{New Order Screen} => Current token = " + JSON.stringify(userToken) + "\n\n\n\n");
-      return res.Content;
+      return res.content;
     }
   }
 
@@ -232,7 +232,7 @@ class NewOrderScreen extends Component {
     else 
     {
       Alert.alert('Success', 
-        (res.message + "\n" + "Order Id: " + res.Content._id), 
+        (res.message + "\n" + "Order Id: " + res.content._id), 
         [{text: 'OK'},]
       );
       this.clearOrder();
