@@ -77,7 +77,8 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
             order.items.find(x => x.product._id == selectedProduct._id).confirmedEaches = true;
             const updatedOrder = {_id : order._id, path:order.path, items:order.items};
             console.log("Order is " + JSON.stringify(order));
-            var res2 = await updateOrder(updatedOrder, token);
+            const res2 = await updateOrder(updatedOrder, token);
+            console.log("res2 = " + JSON.stringify(res2));
             if (!res2.response) 
             {
                 setIsConfirmEachesDialogVisible(false);

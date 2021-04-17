@@ -101,6 +101,7 @@ async function updateOrder(order, token) {
             content: null,
         }; 
     });
+    return response;
 }
 
 
