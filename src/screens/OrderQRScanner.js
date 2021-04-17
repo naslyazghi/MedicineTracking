@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, TextInput } from 'react-native';
+import { ScrollView, Text, View, StyleSheet, Button, TextInput } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { createIconSetFromFontello } from 'react-native-vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {GetStatusOptions} from "../service/orderService";
+import functions from "../helperFunctions/helpers";
 
 import {postOrderInfo} from '../service/orderService';
 import helpers from '../helperFunctions/helpers';
@@ -12,12 +14,17 @@ export default function App({navigation}) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(true);
   const [location, setLocation] = useState('none');
+  const [status, setStatus] = useState('');
   const [message, setMessage ] = useState("");
+  var statusOptions = [];
 
   useEffect(() => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === 'granted');
+      var token = await functions.getToken();
+      var statusOptionsResponse = await GetStatusOptions(token);
+      statusOptions = statusOptionsResponse.content;
     })();
   }, []);
 
@@ -25,9 +32,8 @@ export default function App({navigation}) {
     setScanned(true, console.log("q, ", scanned));
     //alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     test(data);
-    
-
   };
+
 
   const test = (data) => {
     console.log(data);
@@ -48,9 +54,9 @@ export default function App({navigation}) {
              console.log("hello?")
              helpers.getToken().then(token => {
                console.log(token)
-               postOrderInfo(parsed_data.num, location, message, token)
+               postOrderInfo(parsed_data.num, location, status, message, token)
              });
-              alert(`Success! Order ${parsed_data.num} has been updated with location ${location} and message ${message}!`);
+              alert(`Success! Order ${parsed_data.num} has been updated. \nStatus: ${status} \nLocation: ${location} \nMessage: ${message}`);
            }
             catch {
               alert('Failed to update order')
@@ -83,19 +89,16 @@ export default function App({navigation}) {
     <View style={styles.container}> 
       <DropDownPicker
           items={[
-              {label: 'Order at MLC', value: 'MLC'},
-              {label: 'Order in Transit', value: 'Order in Transit'},
-              {label: 'Order Ready for Pickup', value: 'Order Ready for Pickup'}
+              {label: 'COMPLETE', value: 'COMPLETE'},
+              {label: 'PENDING', value: 'PENDING'},
+              {label: 'CANCELED', value: 'CANCELED'},
+              {label: 'DELAYED', value: 'DELAYED'}
           ]}
-          containerStyle={{height: 40, width:'90%', marginTop: 20, marginBottom: 10}}
-          // style={{backgroundColor: '#fafafa'}}
-          // itemStyle={{
-          //     justifyContent: 'flex-start'
-          // }}
-          // dropDownStyle={{backgroundColor: '#fafafa'}}
-          onChangeItem={item => {
-            setLocation(item.value);
-          }}
+        placeholder="Set Status"
+        containerStyle={{height: 40, width:'90%', marginTop: 5}}
+        onChangeItem={item => {
+          setStatus(item.value);
+        }}
       />
       <View style={styles.action}>
         <TextInput
@@ -113,6 +116,19 @@ export default function App({navigation}) {
        // style={StyleSheet.absoluteFillObject}
       />  
 
+      <DropDownPicker
+          items={[
+              {label: 'Order at MLC', value: 'MLC'},
+              {label: 'Order in Transit', value: 'Order in Transit'},
+              {label: 'Order Ready for Pickup', value: 'Order Ready for Pickup'}
+          ]}
+          placeholder="Set Location"
+          containerStyle={{height: 40, width:'90%', marginTop: 10, marginBottom: 10}}
+          onChangeItem={item => {
+            setLocation(item.value);
+          }}
+      />
+
       <Button 
         title={'Tap to Scan'} 
         onPress={() => setScanned(false)} 
@@ -124,10 +140,12 @@ export default function App({navigation}) {
 
 const styles = StyleSheet.create({
     container: {
-      justifyContent: 'center',
+      // justifyContent: 'center',
       alignItems: 'center',
-      paddingHorizontal: 10,
-      paddingBottom: 30,
+      paddingHorizontal: 5,
+      height: '100%',
+      width: '100%',
+      marginTop: 10,
   },
 
   input: {
@@ -144,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '90%',
     flexDirection: 'row',
-    marginTop: 5,
+    marginTop: 10,
     marginBottom: 10,
     paddingHorizontal: 10,
     paddingVertical: 9,
@@ -163,14 +181,14 @@ const styles = StyleSheet.create({
   },
 
   cameraScanner: {
-    width: 400,
-    height: 400,
+    width: '100%',
+    height: '50%',
     flex: 0,
     borderColor: 'gray',
     borderWidth: 0,
-    margin: 10,
+    margin: 5,
     borderRadius: 5,
-    padding: 5,
+    padding: 2,
 },
 
 heading: {
@@ -179,7 +197,7 @@ heading: {
   paddingHorizontal: 10,
   paddingVertical: 2,
   marginBottom: 6,
-  marginTop: 15,
+  marginTop: 0,
   color: 'white',
   fontSize: 20,
  },
