@@ -14,8 +14,8 @@ const searchEachesScreen = () => {
     const res = await searchProducts(search);
     if(res.response)
     {
-      setSearchResult(res.Content);
-      console.log("search result => " + JSON.stringify(res.Content));
+      setSearchResult(res.content);
+      console.log("search result => " + JSON.stringify(res.content));
     }
   }; 
 
