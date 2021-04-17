@@ -75,11 +75,41 @@ async function postOrderInfo(ordernum, location, msg, token) {
     });
 }
 
+
+// Post order location and message
+async function updateOrder(order, token) {
+    console.log("Update Order => order = " + JSON.stringify(order));
+    console.log("Update Order => token = " + token);
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+    const response = axios.put(
+        `${BASE_URL}api/order/by_id`, 
+        order,
+        config
+    )
+    .then( (response) => {
+        if (response.data.error != undefined) throw response.data;
+        console.log("Updated order Successfully => " + response.data.message);
+        return response.data;
+    })
+    .catch((error) => {
+        console.log("Updated order response Error = " + error);
+        return {
+            success: false,
+            message: error,
+            content: null,
+        }; 
+    });
+}
+
+
 module.exports = {
     getOrdersList,
     getOrdersByPath,
     getOrdersByPathRecursive,
-    postOrderInfo
+    postOrderInfo,
+    updateOrder,
 };
 
 

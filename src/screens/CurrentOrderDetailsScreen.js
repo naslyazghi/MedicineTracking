@@ -8,6 +8,10 @@ import {FilledButton} from '../components/FilledButton';
 import Moment from 'moment';
 import { upperCaseFirst } from "upper-case-first";
 import helperFunctions from "../helperFunctions/helpers";
+import {confirmEaches} from "../service/eachesService";
+import {updateOrder} from "../service/orderService";
+import functions from "../helperFunctions/helpers";
+
 
 export function CurrentOrderDetailsScreen({route, navigation}) {
     const {order} = route.params;
@@ -53,6 +57,43 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
 
     const handleCancel = () => {
         setIsConfirmEachesDialogVisible(false);
+    };
+    
+    async function handleConfirmEaches () {
+        handleCancel();
+        var token = await functions.getToken();
+        console.log("Handle Confirm Eaches => product = " + JSON.stringify(selectedProduct));
+        console.log("Handle Confirm Eaches => token = " + JSON.stringify(token));
+        var res = await confirmEaches(token, selectedProduct);
+        if (!res.response) 
+        {
+            setIsConfirmEachesDialogVisible(false);
+            Alert.alert('Error', res.message, [
+                {text: 'OK'},
+            ]);
+        }
+        else
+        {
+            order.items.find(x => x.product._id == selectedProduct._id).confirmedEaches = true;
+            const updatedOrder = {_id : order._id, path:order.path, items:order.items};
+            console.log("Order is " + JSON.stringify(order));
+            var res2 = await updateOrder(updatedOrder, token);
+            if (!res2.response) 
+            {
+                setIsConfirmEachesDialogVisible(false);
+                Alert.alert('Error', res2.message, [
+                    {text: 'OK'},
+                ]);
+            }
+            else
+            {
+                Alert.alert('Success', 
+                    (res2.message + "\n" + "Product Id: " + res2.content._id), 
+                    [{text: 'OK'},],
+                    {cancelable: false},
+                );
+            }
+        }
     };
 
 
@@ -123,23 +164,23 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                 </Text>
                 <Text style={styles.listItemKey}>{"Tracking #:  "}
                     <Text style={styles.listItemValue}>
-                        {order.trackingNumber == undefined ? "Not provided" : order.trackingNumber}
+                        {order?.trackingNumber == undefined ? "Not provided" : order.trackingNumber}
                     </Text>
                 </Text>
                 <Text style={styles.listItemKey}>{"Expected Delivery:  "} 
                     <Text style={styles.listItemValue}>
-                        {order.expectedDelivery == undefined ? "Unknown" : order.trackingNumber}
+                        {order?.expectedDelivery == undefined ? "Unknown" : order.trackingNumber}
                     </Text>
                 </Text>
 
                 <Text style={[styles.orderDetailsHeading, {backgroundColor: backgroundColor}]}>Products</Text>
                 {items.map(function(item, i) {
                     return <View style={styles.listItemValue} key={i}>
-                                {item.product != undefined ? 
+                                {item?.product != undefined ? 
                                     <View>
                                         <Text style={styles.productHeading}>{"Product " + (i+1)}</Text>
                                         <Text style={styles.productDetails}>Identifiers</Text>
-                                        {item.product.identifiers != undefined ? 
+                                        {item?.product?.identifiers != undefined ? 
                                             <View>
                                                 {item.product.identifiers.map((prod, j) => (
                                                     <View key={j}>
@@ -153,40 +194,48 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                                             null
                                         }
 
-                                        {item.quantity != undefined ?
+                                        {item?.quantity != undefined ?
                                             <Text style={styles.listItemKey}>{"Quantity: " +  item.quantity}</Text>
                                             :
                                             null
                                         }
 
-                                        <TouchableOpacity style={styles.eachesSection}  onPress={() => {showEachesConfirmationDialog(item.product)}}>
+                                        <TouchableOpacity style={styles.eachesSection}  disable={item.confirmedEaches} onPress={() => {showEachesConfirmationDialog(item.product)}}>
                                             <Text style={styles.eachesHeading}>Eaches</Text>
                                             <View style={styles.eachesIcon}>
-                                                <Feather
-                                                    name={'check-circle'}
-                                                    color="white"
-                                                    size={21}
-                                                /> 
+                                                {item?.confirmedEaches ?
+                                                    <Feather
+                                                        name={'check-circle'}
+                                                        color="#31DD7B"
+                                                        size={21}
+                                                    /> 
+                                                    :
+                                                    <Feather
+                                                        name={'alert-circle'}
+                                                        color= '#DD3131'
+                                                        size={21}
+                                                    />   
+                                                }                                                   
                                             </View>
                                         </TouchableOpacity>
 
                                         <Dialog.Container visible={isConfirmEachesDialogVisible}>
                                             <Dialog.Title>Confirm Eaches</Dialog.Title>
                                             <Dialog.Description>
-                                                Are the eaches correct?
+                                                Are the eaches correct for this product?
                                             </Dialog.Description>
                                             {/* <Dialog.Input placeholder={'key'} onChangeText={val => this.newIdentifierKeyInputChange(val)}/>
                                             <Dialog.Input placeholder={'Value'} onChangeText={val => this.newIdentifierValueInputChange(val)}/> */}
-                                            <Dialog.Button label="Cancel" onPress={handleCancel}/>
                                             <Dialog.Button label="Yes" 
                                                 onPress={() => {
-                                                    // this.handleAddIdentifier()
+                                                    handleConfirmEaches();
                                                 }}
                                             />
-                                            <Dialog.Button label="Edit" />
+                                            <Dialog.Button label="No, Edit" onPress={handleCancel}/>
+                                            <Dialog.Button label="Cancel" onPress={handleCancel}/>
                                         </Dialog.Container>
 
-                                        {item.product.eaches != undefined ? 
+                                        {item?.product?.eaches != undefined ? 
                                             eaches(item.product.eaches, 1)
                                             :
                                             null
@@ -202,7 +251,7 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                 {items.map(function(item, i) {
                     return <View style={styles.listItemValue} key={i}>
                                 <Text style={styles.productHeading}>{"Desired Product " + (i+1)}</Text>
-                                {item.desired != undefined ? 
+                                {item?.desired?.identifiers != undefined ? 
                                     <View>
                                         <Text style={styles.productDetails}>Identifiers</Text>
                                         {item.desired.identifiers.map((prod, j) => (
@@ -216,7 +265,7 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                                     :
                                     null
                                 }
-                                {item.quantity != undefined ?
+                                {item?.quantity != undefined ?
                                     <Text style={styles.listItemKey}>{"Desired Quantity: "} 
                                         <Text style={styles.listItemValue}>{item.quantity}</Text>
                                     </Text>
@@ -224,7 +273,7 @@ export function CurrentOrderDetailsScreen({route, navigation}) {
                                     null
                                 }
                                 <Text style={styles.productDetails}>Eaches</Text>
-                                {item.desired.eaches != undefined ? 
+                                {item?.desired?.eaches != undefined ? 
                                     eaches(item.desired.eaches, 1)
                                     :
                                     null

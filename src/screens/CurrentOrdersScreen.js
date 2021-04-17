@@ -25,7 +25,7 @@ export function CurrentOrdersScreen({navigation}) {
       await getOrdersByPathRecursive("read", "order", "/home", token)
       .then(response => {
         if(mounted) {
-          var list = response.Content;
+          var list = response.content;
           list.map(order => {
             order.user = order?.user?.name;
             return order
