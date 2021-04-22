@@ -9,6 +9,7 @@ import {SettingsScreen} from '../screens/SettingsScreen';
 import {AboutScreen} from '../screens/AboutScreen';
 import {CurrentOrderDetailsScreen} from '../screens/CurrentOrderDetailsScreen'
 import CurrentOrderDetailsEditableScreen from '../screens/CurrentOrderDetailsEditableScreen'
+import EditEaches, { EditEachesScreen } from '../screens/EditEachesScreen'
 import BarCodeScanner from '../screens/OrderQRScanner'
 import {QRTab} from '../tabNavigators/QRCodeTab'
 import ScanQRCodeStackScreen from '../subStacks/ScanQRCodeStackScreen'
@@ -25,6 +26,7 @@ const MainStackScreen = ({navigation}) => (
         <Drawer.Screen name="Settings" component={SettingsScreen}/>
         <Drawer.Screen name="About" component={AboutScreen}/>
         <Drawer.Screen name="CurrentOrderDetails" component={CurrentOrderDetailsScreen}/>
+        <Drawer.Screen name="EditEaches" component={EditEachesScreen}/>
         <Drawer.Screen name="CurrentOrderDetailsEditable" component={CurrentOrderDetailsEditableScreen}/>
         <Drawer.Screen name="Barcode Scanner" component={BarCodeScanner}/>
         <Drawer.Screen name="QRTab" component={QRTab}/> 
